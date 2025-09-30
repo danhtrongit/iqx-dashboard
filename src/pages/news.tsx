@@ -120,7 +120,16 @@ function HeaderMenu({ sections, activeId }: { sections: Array<{ name: string; ke
 function TopicSection({ section, idName }: { section: { name: string; key: string; news: Array<any> }; idName: string }) {
   return (
     <section id={idName} className="scroll-mt-[112px]">
-      <h2 className="text-sm font-semibold text-muted-foreground mb-3">{section.name}</h2>
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-sm font-semibold text-muted-foreground">{section.name}</h2>
+        <Link
+          to={`/tin-tuc/${section.key}`}
+          className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+        >
+          Xem thêm
+          <ChevronRight className="h-3 w-3" />
+        </Link>
+      </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {section.news.slice(0, 8).map((n) => (
           <a key={n.id} href={`tin-tuc/${n.slug}`} rel="noreferrer">

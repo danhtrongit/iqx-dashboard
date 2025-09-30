@@ -9,8 +9,12 @@ lerna-debug.log*
 
 node_modules
 dist
+docs
 dist-ssr
 *.local
+.claude
+.cursor
+.playwright-mcp
 
 # Editor directories and files
 .vscode/*
