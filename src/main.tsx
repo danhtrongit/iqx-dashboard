@@ -84,7 +84,7 @@ const router = createBrowserRouter([
         element: <NewsPage />,
       },
       {
-        path: "tin-tuc/:key",
+        path: "tin-tuc/danh-muc/:key",
         element: <TopicNewsPage />,
       },
       {
