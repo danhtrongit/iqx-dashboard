@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAllocatedValue } from "@/features/market/api/useMarket";
 import { type market } from "@/lib/schemas";
-import ReactECharts from 'echarts-for-react';
+import ECharts from '@/components/ui/echarts';
 
 type Group = 'ALL' | 'HOSE' | 'HNX' | 'UPCOM';
 type TimeFrame = 'ONE_DAY' | 'ONE_WEEK' | 'ONE_MONTH' | 'YTD' | 'ONE_YEAR';
@@ -239,11 +239,11 @@ export default function MarketAllocation() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-2">
               <div className="text-base font-semibold mb-2">Dòng tiền</div>
-              <ReactECharts option={barOption as any} style={{ height: 320, width: '100%' }} notMerge lazyUpdate />
+              <ECharts option={barOption as any} style={{ height: 320, width: '100%' }} notMerge lazyUpdate />
             </div>
             <div className="space-y-2">
               <div className="text-base font-semibold mb-2">Số lượng cổ phiếu</div>
-              <ReactECharts option={pieOption as any} style={{ height: 320, width: '100%' }} notMerge lazyUpdate />
+              <ECharts option={pieOption as any} style={{ height: 320, width: '100%' }} notMerge lazyUpdate />
             </div>
           </div>
         )}

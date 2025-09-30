@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import ReactECharts from "echarts-for-react";
+import ECharts from "@/components/ui/echarts";
 import { Button } from "@/components/ui/button";
 import { useMarketOHLC } from "@/features/market/api/useMarket";
 
@@ -430,7 +430,7 @@ export default function MarketIndex({ symbol = 'VNINDEX' }: { symbol?: string })
             </aside>
 
             <div className="lg:col-span-3">
-                <ReactECharts style={{ height: 420, width: '100%' }} option={option} notMerge={true} lazyUpdate={true} opts={{ renderer: 'svg' }} />
+                <ECharts style={{ height: 420, width: '100%' }} option={option} notMerge={true} lazyUpdate={true} opts={{ renderer: 'svg' }} />
             </div>
         </div>
     );

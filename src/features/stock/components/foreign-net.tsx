@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import ReactECharts from "echarts-for-react";
+import ECharts from "@/components/ui/echarts";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useCompanyDailyInfo } from "../api/useCompanyDailyInfo";
 import type { ForeignNetEntry } from "@/types/company-daily-info";
@@ -488,9 +488,9 @@ export default function ForeignNet({ symbol }: { symbol: string }) {
                     </div>
                 </div>
             </div>
-            
+
             {/* Chart */}
-            <ReactECharts
+            <ECharts
                 style={{
                     height: (() => {
                         // Dynamic height based on view mode for better visual representation
