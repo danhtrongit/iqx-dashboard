@@ -1,0 +1,9 @@
+{
+    "period": "2025-09-24",
+    "cash_flow_allocation": [
+      { "status": "INCREASE", "count": 18 },
+      { "status": "DECREASE", "count": 21 },
+      { "status": "NOCHANGE", "count": 2 }
+    ]
+  }
+  
