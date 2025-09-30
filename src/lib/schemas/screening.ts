@@ -54,6 +54,7 @@ export const ScreeningTickerItemSchema = z.object({
   enSector: z.string().nullable().optional(),
   viSector: z.string().nullable().optional(),
   icbCodeLv4: z.string().nullable().optional(),
+  industryName: z.string().nullable().optional(),
   stockStrength: z.number().nullable().optional(),
 });
 
