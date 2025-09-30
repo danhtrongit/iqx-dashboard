@@ -20,6 +20,7 @@ import Dashboard from './pages/dashboard'
 import NotFound from './pages/not-found'
 import NewsPage from './pages/news'
 import NewsDetailPage from './pages/news-detail'
+import TopicNewsPage from './pages/topic-news'
 import ScreeningPage from './pages/screening'
 import PersonalPage from './pages/personal'
 import StockDetailPage from './pages/stock-detail'
@@ -81,6 +82,10 @@ const router = createBrowserRouter([
       {
         path: "tin-tuc",
         element: <NewsPage />,
+      },
+      {
+        path: "tin-tuc/:key",
+        element: <TopicNewsPage />,
       },
       {
         path: "tin-tuc/:slug",
