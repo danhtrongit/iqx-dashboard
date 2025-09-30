@@ -18,7 +18,7 @@ export const FinancialMetricItemSchema = z.object({
   titleVi: z.string(),
   fullTitleEn: z.string(),
   fullTitleVi: z.string(),
-  field: z.string(),
+  field: z.string().nullable(),
   name: z.string(),
 });
 

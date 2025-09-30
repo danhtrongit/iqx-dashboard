@@ -122,22 +122,13 @@ export class FinancialStatementsService {
   }
 
   /**
-   * Format large numbers for display
+   * Format large numbers for display - always display in billions (tỷ VND)
    */
   static formatLargeNumber(value: number | null | undefined): string {
     if (value === null || value === undefined || isNaN(value)) return 'N/A';
 
-    if (Math.abs(value) >= 1e12) {
-      return `${(value / 1e12).toFixed(2)} T`;
-    } else if (Math.abs(value) >= 1e9) {
-      return `${(value / 1e9).toFixed(2)} B`;
-    } else if (Math.abs(value) >= 1e6) {
-      return `${(value / 1e6).toFixed(2)} M`;
-    } else if (Math.abs(value) >= 1e3) {
-      return `${(value / 1e3).toFixed(2)} K`;
-    }
-
-    return value.toFixed(2);
+    // Always convert to billions (tỷ VND) = divide by 1e9
+    return (value / 1e9).toFixed(2);
   }
 
   /**

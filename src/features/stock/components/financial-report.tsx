@@ -27,7 +27,7 @@ const SECTION_TABS: { key: StatementSection; label: string }[] = [
 ]
 
 type FinancialItem = {
-  field: string
+  field: string | null
   label: string
   level: number
   parent: string | null
@@ -63,7 +63,8 @@ export default function FinancialReport(props: FinancialReportProps) {
   const loading = metricsLoading || statementLoading || statisticsLoading
   const error = metricsError || statementError || statisticsError
 
-  const toggleCollapse = useCallback((field: string) => {
+  const toggleCollapse = useCallback((field: string | null) => {
+    if (!field) return
     setCollapsedItems(prev => {
       const newSet = new Set(prev)
       if (newSet.has(field)) {
@@ -121,6 +122,9 @@ export default function FinancialReport(props: FinancialReportProps) {
 
     // First pass: create all items
     sectionMetrics.forEach((metric) => {
+      // Skip items with null field
+      if (!metric.field) return
+
       const item: FinancialItem = {
         field: metric.field,
         label: metric.titleVi || metric.titleEn || metric.field,
@@ -134,6 +138,9 @@ export default function FinancialReport(props: FinancialReportProps) {
 
     // Second pass: build hierarchy
     sectionMetrics.forEach((metric) => {
+      // Skip items with null field
+      if (!metric.field) return
+
       const item = itemsByName[metric.name || metric.field]
       if (metric.parent && itemsByName[metric.parent]) {
         itemsByName[metric.parent].children?.push(item)
@@ -147,7 +154,7 @@ export default function FinancialReport(props: FinancialReportProps) {
     const addToList = (item: FinancialItem, parentCollapsed = false) => {
       flatList.push(item)
       if (item.children && item.children.length > 0) {
-        const isCollapsed = collapsedItems.has(item.field)
+        const isCollapsed = item.field ? collapsedItems.has(item.field) : false
         if (!isCollapsed && !parentCollapsed) {
           item.children.forEach(child => addToList(child, isCollapsed))
         }
@@ -158,7 +165,8 @@ export default function FinancialReport(props: FinancialReportProps) {
     return flatList
   }, [metricsData, section, collapsedItems])
 
-  function valueAt(field: string, rec: any) {
+  function valueAt(field: string | null, rec: any) {
+    if (!field) return null
     const key = field?.toLowerCase?.()
     const direct = rec?.[key]
     if (direct != null) return direct
@@ -363,7 +371,7 @@ export default function FinancialReport(props: FinancialReportProps) {
           <thead>
             <tr className="border-b bg-muted/50">
               <th className="sticky left-0 z-10 bg-muted/50 px-4 py-3 text-left font-medium min-w-[300px]">
-                <span>Đơn vị: {formatValue(1000000) === '1.00' ? 'triệu VND' : 'tỷ VND'}</span>
+                <span>Đơn vị: tỷ VND</span>
               </th>
               {periodHeaders.map((h, idx) => (
                 <th key={idx} className="px-3 py-3 text-right font-medium whitespace-nowrap min-w-[100px]">
@@ -375,7 +383,7 @@ export default function FinancialReport(props: FinancialReportProps) {
           <tbody>
             {hierarchicalData.map((item, idx) => {
               const hasChildren = item.children && item.children.length > 0
-              const isCollapsed = collapsedItems.has(item.field)
+              const isCollapsed = item.field ? collapsedItems.has(item.field) : false
 
               return (
                 <tr
