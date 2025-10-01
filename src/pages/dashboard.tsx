@@ -11,10 +11,14 @@ import { MarketBehavior } from "@/components/charts/market-behavior";
 import CashFlowAllocation from "@/components/charts/cash-flow-allocation";
 import AllocatedICBTable from "@/components/charts/allocated-icb";
 import MarketIndices from "@/components/charts/market-indices";
+import XGBoostDashboard from "@/components/xgboost";
 
 export default function Dashboard() {
   return (
     <div className="container mx-auto px-4 space-y-8">
+
+      <XGBoostDashboard />
+
       <LastestNews />
       <div className="relative">
         <h2 className="text-2xl font-bold mb-4">Thống kê thị trường</h2>

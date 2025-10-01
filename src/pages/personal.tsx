@@ -8,6 +8,7 @@ import { StockNews } from "@/components/personalized/stock-news";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { TradingModal } from "@/components/personalized/trading-modal";
+import XGBoostDashboard from "@/components/xgboost";
 
 export default function PersonalPage() {
   const [tradingModalOpen, setTradingModalOpen] = useState(false);
@@ -61,9 +62,21 @@ export default function PersonalPage() {
         </Tabs>
       </section>
 
-      {/* Stock News Section */}
+
+      {/* Tabs cho Stock News và XGBoost */}
       <section>
-        <StockNews />
+        <Tabs defaultValue="stock-news" className="w-full">
+          <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsTrigger value="stock-news">Tin tức liên quan</TabsTrigger>
+            <TabsTrigger value="xgboost">Mô hình XGBoost</TabsTrigger>
+          </TabsList>
+          <TabsContent value="stock-news" className="mt-6">
+            <StockNews />
+          </TabsContent>
+          <TabsContent value="xgboost" className="mt-6">
+            <XGBoostDashboard />
+          </TabsContent>
+        </Tabs>
       </section>
 
       {/* Trading Modal */}
