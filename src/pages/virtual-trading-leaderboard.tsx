@@ -138,11 +138,11 @@ export default function VirtualTradingLeaderboard() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
-            <Trophy className="w-8 h-8 text-primary" />
+          <h1 className="text-xl lg:text-3xl font-bold tracking-tight flex items-center gap-3">
+            <Trophy className="size-6 lg:size-8 text-primary" />
             Bảng Xếp Hạng Virtual Trading
           </h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-sm lg:text-base text-muted-foreground mt-2">
             Top trader xuất sắc nhất trong hệ thống Virtual Trading
           </p>
         </div>
@@ -171,7 +171,6 @@ export default function VirtualTradingLeaderboard() {
         <CardContent>
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2">
-              <label className="text-sm font-medium">Sắp xếp theo:</label>
               <Select
                 value={sortBy}
                 onValueChange={(value) => setSortBy(value as SortBy)}
@@ -197,12 +196,11 @@ export default function VirtualTradingLeaderboard() {
             </div>
 
             <div className="flex items-center gap-2">
-              <label className="text-sm font-medium">Hiển thị:</label>
               <Select
                 value={limit.toString()}
                 onValueChange={(value) => setLimit(Number(value))}
               >
-                <SelectTrigger className="w-24">
+                <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

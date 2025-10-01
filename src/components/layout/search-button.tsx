@@ -13,14 +13,14 @@ export function Search({
     className = '',
     placeholder = 'Tìm kiếm mã cổ phiếu...',
 }: SearchProps) {
-  const { setOpen } = useSearch()
+    const { setOpen } = useSearch()
     return (
         <Button
-            variant='outline'
+            variant='ghost'
             className={cn(
-                'bg-muted/25 group text-muted-foreground hover:bg-accent relative h-8 w-48 flex-1 justify-start rounded-md text-sm font-normal sm:w-64 sm:pe-12 md:flex-none lg:w-80',
+                'bg-muted/25 group text-muted-foreground hover:bg-accent relative h-8 w-48 flex-1 justify-center lg:justify-start rounded-md text-sm font-normal sm:w-64 sm:pe-12 md:flex-none lg:w-80',
                 'md:w-48 lg:w-80', // Show full width on md and larger
-                'w-8 px-2 justify-center', // Icon only on mobile
+                'w-8 px-2', // Icon only on mobile
                 className
             )}
             onClick={() => { setOpen(true) }}

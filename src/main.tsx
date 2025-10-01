@@ -38,7 +38,7 @@ import ForbiddenPage from './pages/403'
 
 // Protected route wrapper
 import { ProtectedRoute } from './components/auth/protected-route'
-import {TradingViewChart} from './pages/tradingview'
+import { TradingViewChart } from './pages/tradingview'
 
 const router = createBrowserRouter([
   // Authentication routes (public)
@@ -62,14 +62,10 @@ const router = createBrowserRouter([
     path: "/403",
     element: <ForbiddenPage />,
   },
-  // Protected routes
+  // Main application routes (now publicly accessible)
   {
     path: "/",
-    element: (
-      <ProtectedRoute>
-        <Root />
-      </ProtectedRoute>
-    ),
+    element: <Root />,
     children: [
       {
         index: true,
@@ -93,7 +89,11 @@ const router = createBrowserRouter([
       },
       {
         path: "ca-nhan",
-        element: <PersonalPage />,
+        element: (
+          <ProtectedRoute>
+            <PersonalPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "bo-loc-co-phieu",
@@ -101,7 +101,11 @@ const router = createBrowserRouter([
       },
       {
         path: "danh-muc-co-phieu",
-        element: <DanhMucCoPhieuPage />,
+        element: (
+          <ProtectedRoute>
+            <DanhMucCoPhieuPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "co-phieu/:symbol",
@@ -109,15 +113,27 @@ const router = createBrowserRouter([
       },
       {
         path: "virtual-trading",
-        element: <VirtualTradingPage />,
+        element: (
+          <ProtectedRoute>
+            <VirtualTradingPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "virtual-trading/leaderboard",
-        element: <VirtualTradingLeaderboard />,
+        element: (
+          <ProtectedRoute>
+            <VirtualTradingLeaderboard />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "settings",
-        element: <SettingsPage />,
+        element: (
+          <ProtectedRoute>
+            <SettingsPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "*",
@@ -134,26 +150,6 @@ createRoot(document.getElementById('root')!).render(
         <RouterProvider router={router} />
         <Toaster
           position="bottom-right"
-          toastOptions={{
-            duration: 4000,
-            style: {
-              background: 'hsl(var(--background))',
-              color: 'hsl(var(--foreground))',
-              border: '1px solid hsl(var(--border))',
-            },
-            success: {
-              iconTheme: {
-                primary: 'hsl(var(--primary))',
-                secondary: 'hsl(var(--primary-foreground))',
-              },
-            },
-            error: {
-              iconTheme: {
-                primary: 'hsl(var(--destructive))',
-                secondary: 'hsl(var(--destructive-foreground))',
-              },
-            },
-          }}
         />
       </AuthProvider>
     </QueryClientProvider>

@@ -163,10 +163,10 @@ export function TradingViewChart({
           </div>
         </div>
       )}
-      <div 
-        ref={chartContainerRef} 
+      <div
+        ref={chartContainerRef}
         id={containerId}
-        className="w-full h-full"
+        className="w-full h-96"
       />
     </div>
   );

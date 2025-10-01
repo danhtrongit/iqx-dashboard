@@ -5,7 +5,7 @@ export const NewsItemSchema = z.object({
   ticker: z.string().nullable(),
   industry: z.string().nullable(),
   news_title: z.string(),
-  news_short_content: z.string(),
+  news_short_content: z.string().nullable(),
   news_source_link: z.string().url(),
   news_image_url: z.string().url().nullable(),
   update_date: z.string(),
