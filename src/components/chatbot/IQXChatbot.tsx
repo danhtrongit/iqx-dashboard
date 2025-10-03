@@ -6,6 +6,7 @@ import ReactMarkdown from 'react-markdown'
 import { useAuth } from '@/contexts/auth-context'
 import { Link } from 'react-router-dom'
 import { DotLottieReact } from '@lottiefiles/dotlottie-react'
+import robotLottie from './robot.lottie?url'
 
 interface IQXChatbotProps {
   options?: ChatbotOptions
@@ -68,7 +69,7 @@ export function IQXChatbot({ options = {} }: IQXChatbotProps) {
           <X size={24} />
         ) : (
           <DotLottieReact 
-            src="/src/components/chatbot/robot.lottie"
+            src={robotLottie}
             loop
             autoplay
             style={{ width: 80, height: 80 }}
