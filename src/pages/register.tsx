@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Eye, EyeOff, UserPlus, Mail, Lock, User } from "lucide-react";
+import { Eye, EyeOff, UserPlus, Mail, Lock, User, Gift } from "lucide-react";
 import { useRegister } from "@/hooks/auth.hooks";
 import { type RegisterRequest, AuthError } from "@/types/auth";
 
@@ -19,16 +19,19 @@ interface RegisterErrors {
   confirmPassword?: string;
   displayName?: string;
   fullName?: string;
+  referralCode?: string;
   general?: string;
 }
 
 export default function RegisterPage() {
+  const [searchParams] = useSearchParams();
   const [formData, setFormData] = useState<RegisterData>({
     email: "",
     password: "",
     confirmPassword: "",
     displayName: "",
     fullName: "",
+    referralCode: searchParams.get("ref") || "",
   });
 
   const [errors, setErrors] = useState<RegisterErrors>({});
@@ -36,6 +39,14 @@ export default function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const registerMutation = useRegister();
+
+  // Update referral code from URL params if it changes
+  useEffect(() => {
+    const refCode = searchParams.get("ref");
+    if (refCode && !formData.referralCode) {
+      setFormData(prev => ({ ...prev, referralCode: refCode }));
+    }
+  }, [searchParams]);
 
   const validateForm = (): boolean => {
     const newErrors: RegisterErrors = {};
@@ -86,6 +97,7 @@ export default function RegisterPage() {
         password: formData.password,
         displayName: formData.displayName || undefined,
         fullName: formData.fullName || undefined,
+        referralCode: formData.referralCode || undefined,
       });
       toast.success("Đăng ký thành công! Hãy kiểm tra email để xác thực tài khoản.");
     } catch (error) {
@@ -300,6 +312,30 @@ export default function RegisterPage() {
               </div>
               {errors.confirmPassword && (
                 <p className="text-sm text-destructive">{errors.confirmPassword}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="referralCode" className="text-sm font-medium flex items-center gap-2">
+                <Gift className="h-4 w-4" />
+                Mã giới thiệu (nếu có)
+              </label>
+              <Input
+                id="referralCode"
+                type="text"
+                value={formData.referralCode}
+                onChange={handleInputChange("referralCode")}
+                placeholder="Nhập mã giới thiệu"
+                disabled={registerMutation.isPending}
+                aria-invalid={!!errors.referralCode}
+              />
+              {errors.referralCode && (
+                <p className="text-sm text-destructive">{errors.referralCode}</p>
+              )}
+              {formData.referralCode && (
+                <p className="text-xs text-green-600">
+                  ✓ Bạn sẽ được áp dụng ưu đãi từ mã giới thiệu này
+                </p>
               )}
             </div>
           </CardContent>

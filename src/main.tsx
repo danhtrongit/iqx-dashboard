@@ -26,7 +26,10 @@ import PersonalPage from './pages/personal'
 import StockDetailPage from './pages/stock-detail'
 import VirtualTradingLeaderboard from './pages/virtual-trading-leaderboard'
 import VirtualTradingPage from './pages/virtual-trading'
-import DanhMucCoPhieuPage from './pages/danh-muc-co-phieu'
+import PremiumUpgradePage from './pages/premium'
+import PaymentSuccessPage from './pages/payment-success'
+import ReferralPage from './pages/referral'
+import AdminCommissionPage from './pages/admin-commission'
 
 // Authentication pages
 import LoginPage from './pages/login'
@@ -100,14 +103,6 @@ const router = createBrowserRouter([
         element: <ScreeningPage />,
       },
       {
-        path: "danh-muc-co-phieu",
-        element: (
-          <ProtectedRoute>
-            <DanhMucCoPhieuPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
         path: "co-phieu/:symbol",
         element: <StockDetailPage />,
       },
@@ -132,6 +127,38 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <SettingsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "premium",
+        element: (
+          <ProtectedRoute>
+            <PremiumUpgradePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "payment/success",
+        element: (
+          <ProtectedRoute>
+            <PaymentSuccessPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "referral",
+        element: (
+          <ProtectedRoute>
+            <ReferralPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "admin/commission",
+        element: (
+          <ProtectedRoute requiredRole="admin">
+            <AdminCommissionPage />
           </ProtectedRoute>
         ),
       },

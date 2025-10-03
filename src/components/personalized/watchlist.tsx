@@ -156,10 +156,10 @@ export function Watchlist() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Eye className="h-5 w-5" />
-            <CardTitle>Danh Sách Theo Dõi</CardTitle>
-            <Badge variant="secondary" className="ml-2">
+            <CardTitle className="text-lg font-semibold">Danh sách theo dõi</CardTitle>
+            <span className="text-sm text-muted-foreground">
               {watchlistCount} mã
-            </Badge>
+            </span>
             {isFetching && <RefreshCw className="h-4 w-4 animate-spin text-muted-foreground" />}
           </div>
           <div className="flex gap-2">
@@ -168,13 +168,14 @@ export function Watchlist() {
               size="sm"
               onClick={handleRefresh}
               disabled={isFetching}
+              className="h-8"
             >
               <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
             </Button>
             <AddToWatchlistDialog>
-              <Button size="sm">
-                <Plus className="h-4 w-4 mr-1" />
-                Thêm mã
+              <Button size="sm" className="h-8">
+                <Plus className="h-4 w-4 mr-1.5" />
+                Thêm
               </Button>
             </AddToWatchlistDialog>
           </div>
@@ -196,145 +197,98 @@ export function Watchlist() {
             </AddToWatchlistDialog>
           </div>
         ) : (
-          <div className="rounded-lg border">
-            <div className="grid grid-cols-12 gap-4 p-3 border-b bg-muted/50 text-xs font-medium text-muted-foreground">
-              <div className="col-span-3">Mã CP / Tên</div>
-              <div className="col-span-2 text-center">Loại</div>
-              <div className="col-span-2 text-center">Cảnh báo</div>
-              <div className="col-span-3 text-center">Ghi chú</div>
-              <div className="col-span-1 text-center">Ngày thêm</div>
-              <div className="col-span-1"></div>
-            </div>
-            <div className="divide-y">
-              {watchlistItems?.map((item) => (
-                <div
-                  key={item.id}
-                  className="grid grid-cols-12 gap-4 p-3 hover:bg-muted/50 transition-all group"
-                >
-                  <div className="col-span-3">
-                    <div className="flex items-start gap-2">
+          <div className="divide-y">
+            {watchlistItems?.map((item) => (
+              <div
+                key={item.id}
+                className="flex items-center justify-between py-3 hover:bg-muted/30 -mx-6 px-6 transition-colors group"
+              >
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => handleToggleFavorite(item.symbol.symbol)}
+                  >
+                    <Heart className={`h-3 w-3 ${
+                      isFavorite(item.symbol.symbol) ? 'fill-red-500 text-red-500' : ''
+                    }`} />
+                  </Button>
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="font-semibold text-sm">{item.symbol.symbol}</span>
+                      <Badge variant="outline" className="text-xs h-5">
+                        {item.symbol.board}
+                      </Badge>
+                      {item.isAlertEnabled && (
+                        <AlertTriangle className="h-3 w-3 text-yellow-500" />
+                      )}
+                    </div>
+                    <div className="text-xs text-muted-foreground truncate">
+                      {item.customName || item.symbol.organShortName || item.symbol.organName}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  {item.isAlertEnabled && (item.alertPriceHigh || item.alertPriceLow) && (
+                    <div className="text-xs space-x-2">
+                      {item.alertPriceHigh && (
+                        <span className="text-red-600">↑ {formatPrice(item.alertPriceHigh)}</span>
+                      )}
+                      {item.alertPriceLow && (
+                        <span className="text-green-600">↓ {formatPrice(item.alertPriceLow)}</span>
+                      )}
+                    </div>
+                  )}
+                  
+                  {item.notes && (
+                    <div className="text-xs text-muted-foreground max-w-[200px] truncate hidden md:block" title={item.notes}>
+                      {item.notes}
+                    </div>
+                  )}
+
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={() => handleToggleFavorite(item.symbol.symbol)}
-                        title={isFavorite(item.symbol.symbol) ? 'Xóa khỏi yêu thích' : 'Thêm vào yêu thích'}
+                        className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
                       >
-                        <Heart className={`h-3 w-3 ${
-                          isFavorite(item.symbol.symbol) ? 'fill-red-500 text-red-500' : ''
-                        }`} />
+                        <MoreVertical className="h-4 w-4" />
                       </Button>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-sm">{item.symbol.symbol}</span>
-                          {item.isAlertEnabled && (
-                            <AlertTriangle className="h-3 w-3 text-yellow-500" />
-                          )}
-                        </div>
-                        <div className="text-xs text-muted-foreground truncate">
-                          {item.customName || item.symbol.organShortName || item.symbol.organName}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="col-span-2 text-center">
-                    <Badge variant="outline" className="text-xs">
-                      {item.symbol.board}
-                    </Badge>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      {item.symbol.type}
-                    </div>
-                  </div>
-
-                  <div className="col-span-2 text-center">
-                    {item.isAlertEnabled && (item.alertPriceHigh || item.alertPriceLow) ? (
-                      <div className="text-xs space-y-1">
-                        {item.alertPriceHigh && (
-                          <div className="text-red-600">
-                            ↑ {formatPrice(item.alertPriceHigh)}
-                          </div>
-                        )}
-                        {item.alertPriceLow && (
-                          <div className="text-green-600">
-                            ↓ {formatPrice(item.alertPriceLow)}
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <span className="text-xs text-muted-foreground">Chưa cài đặt</span>
-                    )}
-                  </div>
-
-                  <div className="col-span-3 text-center">
-                    <div className="text-xs text-muted-foreground truncate" title={item.notes || ''}>
-                      {item.notes || (
-                        <span className="italic">Không có ghi chú</span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="col-span-1 text-center">
-                    <div className="text-xs text-muted-foreground">
-                      {new Date(item.createdAt).toLocaleDateString('vi-VN', {
-                        day: '2-digit',
-                        month: '2-digit',
-                      })}
-                    </div>
-                  </div>
-
-                  <div className="col-span-1 flex justify-end">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                          <Settings className="h-4 w-4 mr-2" />
-                          Cài đặt cảnh báo
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Eye className="h-4 w-4 mr-2" />
-                          Xem chi tiết
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          Chỉnh sửa ghi chú
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-red-600"
-                          onClick={() => handleRemoveFromWatchlist(item)}
-                          disabled={removeFromWatchlistMutation.isPending}
-                        >
-                          {removeFromWatchlistMutation.isPending ? 'Đang xóa...' : 'Xóa khỏi danh sách'}
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem>
+                        <Settings className="h-4 w-4 mr-2" />
+                        Cài đặt cảnh báo
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <Eye className="h-4 w-4 mr-2" />
+                        Xem chi tiết
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        Chỉnh sửa ghi chú
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="text-red-600"
+                        onClick={() => handleRemoveFromWatchlist(item)}
+                        disabled={removeFromWatchlistMutation.isPending}
+                      >
+                        {removeFromWatchlistMutation.isPending ? 'Đang xóa...' : 'Xóa'}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         )}
 
-        <div className="flex items-center justify-between mt-4">
-          <div className="text-sm text-muted-foreground">
+        <div className="flex items-center justify-between mt-4 pt-4 border-t">
+          <div className="text-xs text-muted-foreground">
             Cập nhật: {new Date().toLocaleTimeString('vi-VN')}
-            {watchlistCount > 0 && ` • ${watchlistCount} cổ phiếu`}
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              <Settings className="h-4 w-4 mr-2" />
-              Cài đặt
-            </Button>
-            <Button variant="outline" size="sm">
-              Xem tất cả
-            </Button>
           </div>
         </div>
       </CardContent>

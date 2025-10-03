@@ -14,6 +14,9 @@ importers:
       '@iconify/react':
         specifier: ^6.0.2
         version: 6.0.2(react@19.1.1)
+      '@lottiefiles/dotlottie-react':
+        specifier: ^0.17.3
+        version: 0.17.3(react@19.1.1)
       '@radix-ui/react-accordion':
         specifier: ^1.2.12
         version: 1.2.12(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -104,6 +107,9 @@ importers:
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      qrcode.react:
+        specifier: ^4.2.0
+        version: 4.2.0(react@19.1.1)
       react:
         specifier: ^19.1.1
         version: 19.1.1
@@ -450,6 +456,14 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@lottiefiles/dotlottie-react@0.17.3':
+    resolution: {integrity: sha512-4PeJxXgnjg9JT5V8Qd/+0x9zC0K4iUNEXbucaiQoxTyx/rITYAvzP5JNYD0rhTMyn6edvtdBG6DPm0WOnEiatg==}
+    peerDependencies:
+      react: ^17 || ^18 || ^19
+
+  '@lottiefiles/dotlottie-web@0.53.1':
+    resolution: {integrity: sha512-UDm4ANdeO+Vq47c6idU7x4kQAX2AohF6ynRvmsGnT2GRXYpTa7p4VZYmesvhWqahEWUD7qZq6hPy2CXna8wt9g==}
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -2250,6 +2264,11 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
+  qrcode.react@4.2.0:
+    resolution: {integrity: sha512-QpgqWi8rD9DsS9EP3z7BT+5lY5SFhsqGjpgW5DY/i3mK4M9DTBNz3ErMi8BWYEfI3L0d8GIbGmcdFAS1uIRGjA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
 
@@ -2814,6 +2833,13 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@lottiefiles/dotlottie-react@0.17.3(react@19.1.1)':
+    dependencies:
+      '@lottiefiles/dotlottie-web': 0.53.1
+      react: 19.1.1
+
+  '@lottiefiles/dotlottie-web@0.53.1': {}
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -4691,6 +4717,10 @@ snapshots:
   proxy-from-env@1.1.0: {}
 
   punycode@2.3.1: {}
+
+  qrcode.react@4.2.0(react@19.1.1):
+    dependencies:
+      react: 19.1.1
 
   queue-microtask@1.2.3: {}
 

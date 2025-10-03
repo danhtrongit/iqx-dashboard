@@ -5,20 +5,19 @@ import UserButton from "@/components/layout/user-button";
 import { Search } from "./search-button";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { MenuIcon } from "lucide-react";
+import { MenuIcon, Crown, User, Sparkles } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/contexts/auth-context";
+import { cn } from "@/lib/utils";
 
 export default function Header() {
     const [isOpen, setIsOpen] = useState(false)
+    const { isAuthenticated } = useAuth();
 
     const navigation = [
         {
             name: "Trang chủ",
             href: "/",
-        },
-        {
-            name: "Danh mục cổ phiếu",
-            href: "/danh-muc-co-phieu",
         },
         {
             name: "Bộ lọc cổ phiếu",
@@ -36,15 +35,10 @@ export default function Header() {
             name: "Bảng xếp hạng",
             href: "/virtual-trading/leaderboard",
         },
-        {
-            name: "Cá nhân",
-            href: "/ca-nhan",
-        }
-        
     ]
 
     return (
-        <header className="bg-background header-fixed peer/header sticky top-0 w-[inherit] z-50 py-1 shadow-xs min-h-16 md:h-24">
+        <header className="bg-background header-fixed peer/header sticky top-0 w-[inherit] z-50 py-1 shadow-xs min-h-16 md:h-28">
             <div className="container mx-auto px-4 space-y-1">
                 {/* header main */}
                 <div className="flex items-center justify-between h-14">
@@ -74,7 +68,7 @@ export default function Header() {
                                 <SheetHeader>
                                     <SheetTitle>Menu</SheetTitle>
                                 </SheetHeader>
-                                <div className="flex flex-col gap-2 mt-6">
+                                <div className="flex flex-col gap-3 mt-6">
                                     {navigation.map((item) => (
                                         <Link to={item.href} key={item.href} onClick={() => setIsOpen(false)}>
                                             <Button variant="ghost" className="w-full justify-start text-left h-12">
@@ -82,6 +76,43 @@ export default function Header() {
                                             </Button>
                                         </Link>
                                     ))}
+                                    
+                                    {/* Premium & Personal Links - Only when authenticated */}
+                                    {isAuthenticated && (
+                                        <>
+                                            <div className="my-2 border-t" />
+                                            
+                                            <Link to="/premium" onClick={() => setIsOpen(false)}>
+                                                <Button 
+                                                    className={cn(
+                                                        "w-full justify-start text-left h-12 font-semibold",
+                                                        "bg-gradient-to-r from-yellow-500 via-amber-500 to-orange-500",
+                                                        "hover:from-yellow-600 hover:via-amber-600 hover:to-orange-600",
+                                                        "text-white shadow-lg hover:shadow-xl",
+                                                        "transition-all duration-300",
+                                                        "border-2 border-yellow-400/50"
+                                                    )}
+                                                >
+                                                    <Crown className="size-5 mr-2" />
+                                                    <span>Nâng cấp Premium</span>
+                                                    <Sparkles className="size-4 ml-auto" />
+                                                </Button>
+                                            </Link>
+                                            
+                                            <Link to="/ca-nhan" onClick={() => setIsOpen(false)}>
+                                                <Button 
+                                                    variant="outline"
+                                                    className={cn(
+                                                        "w-full justify-start text-left h-12 font-medium",
+                                                        "border-2 hover:bg-primary/10 hover:border-primary"
+                                                    )}
+                                                >
+                                                    <User className="size-5 mr-2" />
+                                                    <span>Trang cá nhân</span>
+                                                </Button>
+                                            </Link>
+                                        </>
+                                    )}
                                 </div>
                             </SheetContent>
                         </Sheet>
@@ -90,7 +121,7 @@ export default function Header() {
 
                 {/* Desktop Navigation - hidden on mobile */}
                 <div className="hidden md:flex items-center justify-between">
-                    <div className="flex items-center gap-2 overflow-x-auto">
+                    <div className="flex items-center gap-2">
                         {navigation.map((item) => (
                             <Link to={item.href} key={item.href}>
                                 <Button variant="ghost" size="sm" className="rounded-none uppercase whitespace-nowrap">
@@ -98,6 +129,44 @@ export default function Header() {
                                 </Button>
                             </Link>
                         ))}
+                        
+                        {/* Premium & Personal Links - Only when authenticated */}
+                        {isAuthenticated && (
+                            <>
+                                <Link to="/premium">
+                                    <Button 
+                                        size="sm" 
+                                        className={cn(
+                                            "rounded-full uppercase whitespace-nowrap font-semibold",
+                                            "bg-gradient-to-r from-yellow-500 via-amber-500 to-orange-500",
+                                            "hover:from-yellow-600 hover:via-amber-600 hover:to-orange-600",
+                                            "text-white shadow-lg hover:shadow-xl",
+                                            "transition-all duration-300 hover:scale-105",
+                                            "border-2 border-yellow-400/50"
+                                        )}
+                                    >
+                                        <Crown className="size-4 mr-1.5" />
+                                        <span>Nâng cấp Premium</span>
+                                        <Sparkles className="size-3 ml-1.5" />
+                                    </Button>
+                                </Link>
+                                
+                                <Link to="/ca-nhan">
+                                    <Button 
+                                        size="sm"
+                                        variant="outline"
+                                        className={cn(
+                                            "rounded-full uppercase whitespace-nowrap font-medium",
+                                            "border-2 hover:bg-primary/10 hover:border-primary",
+                                            "transition-all duration-300 hover:scale-105"
+                                        )}
+                                    >
+                                        <User className="size-4 mr-1.5" />
+                                        <span>Trang cá nhân</span>
+                                    </Button>
+                                </Link>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

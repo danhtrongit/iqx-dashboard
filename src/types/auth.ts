@@ -48,6 +48,7 @@ export const RegisterRequestSchema = z.object({
     ),
   displayName: z.string().min(2, "Tên hiển thị phải có ít nhất 2 ký tự").optional(),
   fullName: z.string().max(255, "Họ tên không được quá 255 ký tự").optional(),
+  referralCode: z.string().optional(),
 });
 
 export type RegisterRequest = z.infer<typeof RegisterRequestSchema>;

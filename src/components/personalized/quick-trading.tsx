@@ -2,15 +2,25 @@ import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { ArrowUpRight, ArrowDownRight, Search } from 'lucide-react'
+import { 
+  ArrowUpRight, 
+  ArrowDownRight, 
+  Search, 
+  TrendingUp, 
+  Wallet,
+  Zap,
+  Sparkles
+} from 'lucide-react'
 import { TradingModal } from './trading-modal'
 import { useVirtualPortfolio } from '@/hooks/use-virtual-trading'
+import { cn } from '@/lib/utils'
 
 export function QuickTrading() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedSymbol, setSelectedSymbol] = useState<string>('')
   const [tradingMode, setTradingMode] = useState<'BUY' | 'SELL'>('BUY')
   const [searchSymbol, setSearchSymbol] = useState('')
+  const [focusedInput, setFocusedInput] = useState(false)
 
   const { data: portfolio } = useVirtualPortfolio()
 
@@ -34,79 +44,105 @@ export function QuickTrading() {
   }
 
   const recentHoldings = portfolio?.holdings.slice(0, 3) || []
+  const totalHoldings = portfolio?.holdings.length || 0
 
   return (
     <>
       <Card>
-        <CardHeader>
-          <CardTitle>Giao dịch nhanh</CardTitle>
-          <CardDescription>Mua/bán cổ phiếu nhanh chóng</CardDescription>
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Zap className="h-5 w-5" />
+              <CardTitle className="text-lg font-semibold">Giao dịch nhanh</CardTitle>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 p-3 rounded-lg border bg-muted/30">
+            <Wallet className="h-4 w-4 text-muted-foreground" />
+            <div className="flex-1">
+              <p className="text-xs text-muted-foreground">Số dư khả dụng</p>
+              <p className="text-sm font-bold">
+                {portfolio?.cashBalance.toLocaleString('vi-VN') || 0} VND
+              </p>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Search & Trade */}
-          <div className="space-y-2">
-            <div className="flex gap-2">
+
+        <CardContent className="space-y-5">
+          {/* Search Bar */}
+          <div className="flex gap-2">
+            <div className="relative flex-1">
               <Input
-                placeholder="Nhập mã cổ phiếu (VD: ACB, VNM...)"
+                placeholder="Nhập mã cổ phiếu (VD: ACB, VNM)"
                 value={searchSymbol}
                 onChange={(e) => setSearchSymbol(e.target.value.toUpperCase())}
                 onKeyPress={handleKeyPress}
-                className="uppercase"
+                onFocus={() => setFocusedInput(true)}
+                onBlur={() => setFocusedInput(false)}
+                className="uppercase h-10"
               />
-              <Button onClick={handleSearchTrade} disabled={!searchSymbol.trim()}>
-                <Search className="h-4 w-4 mr-2" />
-                Tìm
-              </Button>
+              <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             </div>
+            <Button 
+              onClick={handleSearchTrade} 
+              disabled={!searchSymbol.trim()}
+              className="h-10 px-4"
+            >
+              Tìm
+            </Button>
           </div>
 
-          {/* Quick Action Buttons */}
+          {/* Holdings Section */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h4 className="text-sm font-medium text-muted-foreground">Cổ phiếu đang nắm giữ</h4>
-              {recentHoldings.length > 0 && (
+              <h4 className="text-sm font-medium text-muted-foreground">Đang nắm giữ</h4>
+              {totalHoldings > 0 && (
                 <span className="text-xs text-muted-foreground">
-                  {recentHoldings.length}/{portfolio?.holdings.length || 0}
+                  {recentHoldings.length}/{totalHoldings} mã
                 </span>
               )}
             </div>
 
             {recentHoldings.length === 0 ? (
-              <div className="text-center py-6 text-muted-foreground text-sm">
-                <p>Bạn chưa có cổ phiếu nào</p>
-                <p className="text-xs mt-1">Tìm kiếm mã cổ phiếu để bắt đầu giao dịch</p>
+              <div className="text-center py-8 border border-dashed rounded-lg">
+                <TrendingUp className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+                <p className="text-sm font-medium">Chưa có cổ phiếu nào</p>
+                <p className="text-xs text-muted-foreground mt-1">Bắt đầu giao dịch ngay</p>
               </div>
             ) : (
               <div className="space-y-2">
                 {recentHoldings.map((holding) => (
                   <div
                     key={holding.id}
-                    className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors"
+                    className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
                   >
-                    <div className="flex-1">
-                      <div className="font-semibold">{holding.symbolCode}</div>
-                      <div className="text-xs text-muted-foreground">
-                        SL: {holding.quantity.toLocaleString('vi-VN')}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-semibold">{holding.symbolCode}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {holding.quantity.toLocaleString('vi-VN')} CP
+                        </span>
                       </div>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        TB: {holding.averagePrice.toLocaleString('vi-VN')}
+                      </p>
                     </div>
-                    <div className="flex gap-2">
+                    
+                    <div className="flex gap-1.5">
                       <Button
                         size="sm"
                         variant="outline"
-                        className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                        className="h-8 w-8 p-0"
                         onClick={() => handleOpenModal(holding.symbolCode, 'BUY')}
                       >
-                        <ArrowUpRight className="h-4 w-4 mr-1" />
-                        Mua
+                        <ArrowUpRight className="h-3.5 w-3.5 text-green-600" />
                       </Button>
                       <Button
                         size="sm"
                         variant="outline"
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        className="h-8 w-8 p-0"
                         onClick={() => handleOpenModal(holding.symbolCode, 'SELL')}
                       >
-                        <ArrowDownRight className="h-4 w-4 mr-1" />
-                        Bán
+                        <ArrowDownRight className="h-3.5 w-3.5 text-red-600" />
                       </Button>
                     </div>
                   </div>
@@ -115,7 +151,7 @@ export function QuickTrading() {
             )}
           </div>
 
-          {/* Popular Stocks - Optional */}
+          {/* Popular Stocks */}
           <div className="space-y-3">
             <h4 className="text-sm font-medium text-muted-foreground">Cổ phiếu phổ biến</h4>
             <div className="grid grid-cols-3 gap-2">
@@ -123,9 +159,8 @@ export function QuickTrading() {
                 <Button
                   key={symbol}
                   variant="outline"
-                  size="sm"
                   onClick={() => handleOpenModal(symbol, 'BUY')}
-                  className="hover:bg-primary/10"
+                  className="h-10 font-semibold text-sm hover:bg-muted"
                 >
                   {symbol}
                 </Button>

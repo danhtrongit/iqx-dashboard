@@ -14,7 +14,7 @@ import {
 } from "../ui/dropdown-menu";
 import { Badge } from "../ui/badge";
 import { Skeleton } from "../ui/skeleton";
-import { LayoutGrid, User, Shield, Settings, LogOut, Crown, CheckCircle, AlertCircle, TrendingUp } from "lucide-react";
+import { LayoutGrid, User, Shield, Settings, LogOut, Crown, CheckCircle, AlertCircle, TrendingUp, Gift } from "lucide-react";
 
 export default function UserButton() {
     const { user, isAuthenticated, isLoading } = useAuth();
@@ -164,9 +164,21 @@ export default function UserButton() {
                         <DropdownMenuShortcut>⌘D</DropdownMenuShortcut>
                     </DropdownMenuItem>
 
+                    <DropdownMenuItem onClick={() => navigate("/premium")}>
+                        <Crown className="size-4" />
+                        <span>Nâng cấp Premium</span>
+                        <DropdownMenuShortcut>⌘P</DropdownMenuShortcut>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem onClick={() => navigate("/referral")}>
+                        <Gift className="size-4" />
+                        <span>Giới thiệu & Hoa hồng</span>
+                        <DropdownMenuShortcut>⌘R</DropdownMenuShortcut>
+                    </DropdownMenuItem>
+
                     <DropdownMenuItem onClick={() => navigate("/virtual-trading")}>
                         <TrendingUp className="size-4" />
-                        <span>Tạo portfolio đấu trường ảo</span>
+                        <span>Đăng ký đấu trường ảo</span>
                         <DropdownMenuShortcut>⌘T</DropdownMenuShortcut>
                     </DropdownMenuItem>
 
@@ -179,9 +191,9 @@ export default function UserButton() {
                     {user.role === "admin" && (
                         <>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => navigate("/admin/commission")}>
                                 <Shield className="size-4" />
-                                <span>Quản trị hệ thống</span>
+                                <span>Cài đặt hoa hồng</span>
                                 <DropdownMenuShortcut>⌘A</DropdownMenuShortcut>
                             </DropdownMenuItem>
                         </>

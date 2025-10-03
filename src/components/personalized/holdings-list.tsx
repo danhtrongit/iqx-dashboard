@@ -88,14 +88,15 @@ export function HoldingsList({ onTrade }: HoldingsListProps) {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Danh mục đầu tư</CardTitle>
-            <CardDescription>{holdings.length} mã cổ phiếu đang nắm giữ</CardDescription>
+            <CardTitle className="text-lg font-semibold">Danh mục đầu tư</CardTitle>
+            <CardDescription className="text-sm">{holdings.length} mã cổ phiếu</CardDescription>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-1.5">
             <Button
               variant={sortBy === 'value' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setSortBy('value')}
+              className="text-xs h-8"
             >
               Giá trị
             </Button>
@@ -103,6 +104,7 @@ export function HoldingsList({ onTrade }: HoldingsListProps) {
               variant={sortBy === 'profit' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setSortBy('profit')}
+              className="text-xs h-8"
             >
               Lợi nhuận
             </Button>
@@ -110,6 +112,7 @@ export function HoldingsList({ onTrade }: HoldingsListProps) {
               variant={sortBy === 'percentage' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setSortBy('percentage')}
+              className="text-xs h-8"
             >
               %
             </Button>
@@ -117,7 +120,7 @@ export function HoldingsList({ onTrade }: HoldingsListProps) {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3">
+        <div className="divide-y">
           {sortedHoldings.map((holding) => {
             const profitLossPercentage = VirtualTradingService.parsePercentage(
               holding.profitLossPercentage
@@ -127,54 +130,41 @@ export function HoldingsList({ onTrade }: HoldingsListProps) {
             return (
               <div
                 key={holding.id}
-                className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
+                className="flex items-center justify-between py-4 first:pt-0 last:pb-0 hover:bg-muted/30 -mx-6 px-6 transition-colors"
               >
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-semibold text-lg">{holding.symbolCode}</h4>
-                    <span className="text-sm text-muted-foreground truncate">
+                  <div className="flex items-baseline gap-2 mb-1.5">
+                    <h4 className="font-semibold text-base">{holding.symbolCode}</h4>
+                    <span className="text-xs text-muted-foreground truncate">
                       {holding.symbolName}
                     </span>
                   </div>
-                  <div className="flex items-center gap-4 text-sm">
-                    <span className="text-muted-foreground">
-                      SL: {holding.quantity.toLocaleString('vi-VN')}
-                    </span>
-                    <span className="text-muted-foreground">
-                      TB: {formatCurrency(holding.averagePrice)}
-                    </span>
-                    <span className="font-medium">
-                      Hiện: {formatCurrency(holding.currentPrice)}
-                    </span>
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                    <span>SL: {holding.quantity.toLocaleString('vi-VN')}</span>
+                    <span>TB: {formatCurrency(holding.averagePrice)}</span>
+                    <span>Hiện: {formatCurrency(holding.currentPrice)}</span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-4">
                   <div className="text-right">
-                    <div className="font-bold text-lg">
+                    <div className="font-bold text-base mb-1">
                       {formatCurrency(holding.currentValue)}
                     </div>
-                    <div className="flex items-center gap-1 justify-end">
+                    <div className={cn(
+                      'flex items-center gap-1 justify-end text-sm font-medium',
+                      isPositive ? 'text-green-600' : 'text-red-600'
+                    )}>
                       {isPositive ? (
-                        <TrendingUp className="h-4 w-4 text-green-600" />
+                        <ArrowUpRight className="h-3 w-3" />
                       ) : (
-                        <TrendingDown className="h-4 w-4 text-red-600" />
+                        <ArrowDownRight className="h-3 w-3" />
                       )}
-                      <span
-                        className={cn(
-                          'text-sm font-medium',
-                          isPositive ? 'text-green-600' : 'text-red-600'
-                        )}
-                      >
+                      <span>
                         {isPositive ? '+' : ''}
                         {formatCurrency(holding.unrealizedProfitLoss)}
                       </span>
-                      <span
-                        className={cn(
-                          'text-sm',
-                          isPositive ? 'text-green-600' : 'text-red-600'
-                        )}
-                      >
+                      <span className="text-xs">
                         ({isPositive ? '+' : ''}
                         {profitLossPercentage.toFixed(2)}%)
                       </span>
@@ -182,22 +172,22 @@ export function HoldingsList({ onTrade }: HoldingsListProps) {
                   </div>
 
                   {onTrade && (
-                    <div className="flex gap-2">
+                    <div className="flex gap-1.5">
                       <Button
                         size="sm"
                         variant="outline"
-                        className="text-green-600 hover:text-green-700"
+                        className="h-8 w-8 p-0"
                         onClick={() => onTrade(holding.symbolCode, 'BUY')}
                       >
-                        <ArrowUpRight className="h-4 w-4" />
+                        <ArrowUpRight className="h-3.5 w-3.5 text-green-600" />
                       </Button>
                       <Button
                         size="sm"
                         variant="outline"
-                        className="text-red-600 hover:text-red-700"
+                        className="h-8 w-8 p-0"
                         onClick={() => onTrade(holding.symbolCode, 'SELL')}
                       >
-                        <ArrowDownRight className="h-4 w-4" />
+                        <ArrowDownRight className="h-3.5 w-3.5 text-red-600" />
                       </Button>
                     </div>
                   )}

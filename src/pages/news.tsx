@@ -90,7 +90,7 @@ function HeaderMenu({ sections, activeId }: { sections: Array<{ name: string; ke
   return (
     <>
       <div className="h-12" />
-      <div className="fixed top-24 left-0 right-0 z-30 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+      <div className="fixed top-28 left-0 right-0 z-30 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-2">
             {sections.map((s) => {

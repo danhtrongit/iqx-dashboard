@@ -22,24 +22,21 @@ export default function PersonalPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-8">
-      {/* Portfolio Statistics - 4 thẻ thống kê tổng quan */}
+    <div className="container mx-auto px-4 py-6 space-y-6">
+      {/* Portfolio Statistics */}
       <section>
-        <h2 className="text-2xl font-bold mb-4">Tổng quan Portfolio</h2>
+        <h2 className="text-lg font-semibold mb-4">Tổng quan</h2>
         <PortfolioStats />
       </section>
 
-      {/* Quick Trading & Portfolio Details - 3 cột */}
+      {/* Quick Trading & Portfolio Details */}
       <section>
-        <h2 className="text-2xl font-bold mb-4">Chi tiết đầu tư</h2>
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* Quick Trading - Cột trái */}
+        <h2 className="text-lg font-semibold mb-4">Chi tiết đầu tư</h2>
+        <div className="grid gap-4 lg:grid-cols-3">
           <div className="lg:col-span-1">
             <QuickTrading />
           </div>
-
-          {/* Holdings List - Cột giữa rộng hơn */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4">
             <HoldingsList onTrade={handleTrade} />
             <PortfolioAllocation />
           </div>
@@ -49,31 +46,30 @@ export default function PersonalPage() {
       {/* Tabs cho Watchlist và Transaction History */}
       <section>
         <Tabs defaultValue="watchlist" className="w-full">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
-            <TabsTrigger value="watchlist">Danh sách theo dõi</TabsTrigger>
-            <TabsTrigger value="history">Lịch sử giao dịch</TabsTrigger>
+          <TabsList className="h-9">
+            <TabsTrigger value="watchlist" className="text-sm">Theo dõi</TabsTrigger>
+            <TabsTrigger value="history" className="text-sm">Lịch sử</TabsTrigger>
           </TabsList>
-          <TabsContent value="watchlist" className="mt-6">
+          <TabsContent value="watchlist" className="mt-4">
             <Watchlist />
           </TabsContent>
-          <TabsContent value="history" className="mt-6">
+          <TabsContent value="history" className="mt-4">
             <VirtualTradingHistory />
           </TabsContent>
         </Tabs>
       </section>
 
-
       {/* Tabs cho Stock News và XGBoost */}
       <section>
         <Tabs defaultValue="stock-news" className="w-full">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
-            <TabsTrigger value="stock-news">Tin tức liên quan</TabsTrigger>
-            <TabsTrigger value="xgboost">Mô hình XGBoost</TabsTrigger>
+          <TabsList className="h-9">
+            <TabsTrigger value="stock-news" className="text-sm">Tin tức</TabsTrigger>
+            <TabsTrigger value="xgboost" className="text-sm">Dự đoán</TabsTrigger>
           </TabsList>
-          <TabsContent value="stock-news" className="mt-6">
+          <TabsContent value="stock-news" className="mt-4">
             <StockNews />
           </TabsContent>
-          <TabsContent value="xgboost" className="mt-6">
+          <TabsContent value="xgboost" className="mt-4">
             <XGBoostDashboard />
           </TabsContent>
         </Tabs>

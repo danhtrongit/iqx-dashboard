@@ -183,3 +183,30 @@
     cursor: pointer;
   }
 }
+
+/* Portfolio Allocation Chart Animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes ping-ring {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-ping-ring {
+  animation: ping-ring 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
