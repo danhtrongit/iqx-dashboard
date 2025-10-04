@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useChatbot, formatTime, sanitizeHTML } from '@/hooks/use-chatbot'
 import type { ChatbotOptions } from '@/types/chatbot'
-import { X, Send, LogIn } from 'lucide-react'
+import { X, Send, LogIn, Trash2 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import { useAuth } from '@/contexts/auth-context'
 import { Link } from 'react-router-dom'
 import { DotLottieReact } from '@lottiefiles/dotlottie-react'
 import robotLottie from './robot.lottie?url'
+import { Button } from '../ui/button'
 
 interface IQXChatbotProps {
   options?: ChatbotOptions
@@ -21,11 +22,13 @@ export function IQXChatbot({ options = {} }: IQXChatbotProps) {
     suggestions,
     messagesEndRef,
     sendMessage,
+    clearHistory,
     toggleOpen
   } = useChatbot(options)
 
   const [inputValue, setInputValue] = useState('')
   const [showWelcome, setShowWelcome] = useState(true)
+  const [showClearConfirm, setShowClearConfirm] = useState(false)
 
   useEffect(() => {
     if (messages.length > 0) {
@@ -51,10 +54,16 @@ export function IQXChatbot({ options = {} }: IQXChatbotProps) {
     sendMessage(suggestion)
   }
 
+  const handleClearHistory = () => {
+    clearHistory()
+    setShowWelcome(true)
+    setShowClearConfirm(false)
+  }
+
   return (
     <div className="fixed bottom-5 right-5 z-[9999] font-sans text-sm leading-6">
       {/* Toggle Button */}
-      <button
+      <Button variant="ghost" size="icon"
         onClick={toggleOpen}
         className={`
           size-20 rounded-full border-none cursor-pointer
@@ -75,7 +84,7 @@ export function IQXChatbot({ options = {} }: IQXChatbotProps) {
             style={{ width: 80, height: 80 }}
           />
         )}
-      </button>
+      </Button>
 
       {/* Chat Container */}
       {isOpen && (
@@ -88,9 +97,20 @@ export function IQXChatbot({ options = {} }: IQXChatbotProps) {
               </div>
               <span>Trợ lý ảo hệ thống IQX</span>
             </div>
-            <div className="text-xs opacity-90 flex items-center gap-1">
-              <div className="w-2 h-2 bg-[#00b894] rounded-full animate-[pulse_2s_infinite]" />
-              <span>Online</span>
+            <div className="flex items-center gap-3">
+              {isAuthenticated && messages.length > 0 && (
+                <button
+                  onClick={() => setShowClearConfirm(true)}
+                  className="p-1.5 hover:bg-white/20 rounded-lg transition-all"
+                  title="Xóa lịch sử chat"
+                >
+                  <Trash2 size={18} />
+                </button>
+              )}
+              <div className="text-xs opacity-90 flex items-center gap-1">
+                <div className="w-2 h-2 bg-[#00b894] rounded-full animate-[pulse_2s_infinite]" />
+                <span>Online</span>
+              </div>
             </div>
           </div>
 
@@ -237,6 +257,37 @@ Vui lòng đăng nhập để:
                 >
                   <Send size={16} />
                 </button>
+              </div>
+            </div>
+          )}
+
+          {/* Clear History Confirmation Modal */}
+          {showClearConfirm && (
+            <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-10 rounded-2xl backdrop-blur-sm">
+              <div className="bg-background rounded-xl p-6 m-4 max-w-sm shadow-xl border border-border animate-[slideUp_0.2s_ease]">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center">
+                    <Trash2 className="text-red-600 dark:text-red-400" size={20} />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground">Xóa lịch sử chat?</h3>
+                </div>
+                <p className="text-sm text-muted-foreground mb-6">
+                  Tất cả tin nhắn trong cuộc hội thoại này sẽ bị xóa vĩnh viễn. Bạn có chắc chắn muốn tiếp tục?
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowClearConfirm(false)}
+                    className="flex-1 px-4 py-2 bg-background border border-border text-foreground rounded-lg hover:bg-muted transition-all"
+                  >
+                    Hủy
+                  </button>
+                  <button
+                    onClick={handleClearHistory}
+                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all font-medium"
+                  >
+                    Xóa
+                  </button>
+                </div>
               </div>
             </div>
           )}

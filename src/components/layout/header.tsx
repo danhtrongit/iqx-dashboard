@@ -5,7 +5,7 @@ import UserButton from "@/components/layout/user-button";
 import { Search } from "./search-button";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { MenuIcon, Crown, User, Sparkles } from "lucide-react";
+import { MenuIcon, Crown, User, Sparkles, Zap } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { cn } from "@/lib/utils";
@@ -31,6 +31,7 @@ export default function Header() {
             name: "Tin tức",
             href: "/tin-tuc",
         },
+   
         {
             name: "Bảng xếp hạng",
             href: "/virtual-trading/leaderboard",
@@ -81,6 +82,23 @@ export default function Header() {
                                     {isAuthenticated && (
                                         <>
                                             <div className="my-2 border-t" />
+                                            
+                                            <Link to="/arix-pro" onClick={() => setIsOpen(false)}>
+                                                <Button 
+                                                    className={cn(
+                                                        "w-full justify-start text-left h-12 font-semibold",
+                                                        "bg-gradient-to-r from-purple-500 via-violet-500 to-indigo-600",
+                                                        "hover:from-purple-600 hover:via-violet-600 hover:to-indigo-700",
+                                                        "text-white shadow-lg hover:shadow-xl",
+                                                        "transition-all duration-300",
+                                                        "border-2 border-purple-400/50"
+                                                    )}
+                                                >
+                                                    <Sparkles className="size-5 mr-2" />
+                                                    <span>AriX Pro</span>
+                                                    <Zap className="size-4 ml-auto" />
+                                                </Button>
+                                            </Link>
                                             
                                             <Link to="/premium" onClick={() => setIsOpen(false)}>
                                                 <Button 
@@ -133,6 +151,24 @@ export default function Header() {
                         {/* Premium & Personal Links - Only when authenticated */}
                         {isAuthenticated && (
                             <>
+                                <Link to="/arix-pro">
+                                    <Button 
+                                        size="sm" 
+                                        className={cn(
+                                            "rounded-full uppercase whitespace-nowrap font-semibold",
+                                            "bg-gradient-to-r from-purple-500 via-violet-500 to-indigo-600",
+                                            "hover:from-purple-600 hover:via-violet-600 hover:to-indigo-700",
+                                            "text-white shadow-lg hover:shadow-xl",
+                                            "transition-all duration-300 hover:scale-105",
+                                            "border-2 border-purple-400/50"
+                                        )}
+                                    >
+                                        <Sparkles className="size-4 mr-1.5" />
+                                        <span>AriX Pro</span>
+                                        <Zap className="size-3 ml-1.5" />
+                                    </Button>
+                                </Link>
+                                
                                 <Link to="/premium">
                                     <Button 
                                         size="sm" 

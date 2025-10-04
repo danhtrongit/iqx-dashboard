@@ -32,9 +32,12 @@ export function PortfolioOverview() {
     )
   }
 
-  const totalValue = (portfolio?.totalValue || 0)
-  const totalProfit = (portfolio?.totalProfit || 0)
-  const totalProfitPercent = (portfolio?.totalProfitPercent || 0)
+  const totalValue = (portfolio?.totalAssetValue || 0)
+  const totalProfit = (portfolio?.totalProfitLoss || 0)
+  const totalProfitPercentString = (portfolio?.profitLossPercentage || '0')
+  const totalProfitPercent = typeof totalProfitPercentString === 'string' 
+    ? parseFloat(totalProfitPercentString) 
+    : totalProfitPercentString
   const isPositive = totalProfit >= 0
 
   return (

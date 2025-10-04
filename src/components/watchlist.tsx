@@ -15,10 +15,10 @@ import {
   type WatchlistItem
 } from '@/lib/api/watchlist'
 import { useFavorites } from '@/hooks/useFavorites'
-import { AddToWatchlistDialog } from './add-to-watchlist-dialog'
 import { useState } from 'react'
+import { AddToWatchlistDialog } from '@/components/add-to-watchlist-dialog'
 
-export function Watchlist() {
+export default function Watchlist() {
   const queryClient = useQueryClient()
   const { toggleFavorite, isFavorite } = useFavorites()
   const [error, setError] = useState<string | null>(null)

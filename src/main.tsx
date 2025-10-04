@@ -30,7 +30,8 @@ import PremiumUpgradePage from './pages/premium'
 import PaymentSuccessPage from './pages/payment-success'
 import ReferralPage from './pages/referral'
 import AdminCommissionPage from './pages/admin-commission'
-
+import WatchlistPage from './pages/watchlist-page'
+import AriXProPage from './pages/arix-pro'
 // Authentication pages
 import LoginPage from './pages/login'
 import RegisterPage from './pages/register'
@@ -77,6 +78,18 @@ const router = createBrowserRouter([
       {
         path: "bieu-do-ky-thuat",
         element: <TradingViewChart />,
+      },
+      {
+        path: "theo-doi",
+        element: <WatchlistPage />,
+      },
+      {
+        path: "arix-pro",
+        element: (
+          <ProtectedRoute>
+            <AriXProPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "tin-tuc",

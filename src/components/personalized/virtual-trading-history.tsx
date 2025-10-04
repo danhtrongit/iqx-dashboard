@@ -39,11 +39,11 @@ const TRANSACTION_TYPES: Array<{ value: TransactionType | 'ALL'; label: string }
   { value: 'SELL', label: 'Bán' }
 ]
 
-const ITEMS_PER_PAGE = [10, 20, 50]
+const ITEMS_PER_PAGE = [5, 10, 20, 50]
 
 export function VirtualTradingHistory() {
   const [currentPage, setCurrentPage] = useState(1)
-  const [pageSize, setPageSize] = useState(20)
+  const [pageSize, setPageSize] = useState(5)
   const [transactionType, setTransactionType] = useState<TransactionType | 'ALL'>('ALL')
 
   const queryParams: GetTransactionsRequest = {
@@ -87,7 +87,7 @@ export function VirtualTradingHistory() {
   const getTransactionBadge = (type: TransactionType) => {
     return (
       <Badge
-        variant={type === 'BUY' ? 'default' : 'destructive'}
+        variant="outline"
         className="text-xs"
       >
         <div className="flex items-center gap-1">
@@ -109,21 +109,6 @@ export function VirtualTradingHistory() {
       })
     }
   }
-
-  // const calculateProfitLoss = (transaction: any) => {
-  //   if (transaction.transactionType === 'SELL') {
-  //     // For sell orders, we need original buy price to calculate P&L
-  //     // Since we don't have that info, we'll show the net amount received
-  //     const netReceived = transaction.netAmount
-  //     const grossAmount = transaction.totalAmount
-  //     const profitLoss = netReceived - grossAmount + transaction.fee + transaction.tax
-  //     return {
-  //       amount: profitLoss,
-  //       isPositive: profitLoss >= 0
-  //     }
-  //   }
-  //   return null
-  // }
 
   const getTotalPages = () => {
     if (!transactionData?.meta?.total || !pageSize) return 0

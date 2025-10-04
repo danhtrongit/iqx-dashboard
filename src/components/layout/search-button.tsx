@@ -16,7 +16,7 @@ export function Search({
     const { setOpen } = useSearch()
     return (
         <Button
-            variant='ghost'
+            variant='outline'
             className={cn(
                 'bg-muted/25 group text-muted-foreground hover:bg-accent relative h-8 w-48 flex-1 justify-center lg:justify-start rounded-md text-sm font-normal sm:w-64 sm:pe-12 md:flex-none lg:w-80',
                 'md:w-48 lg:w-80', // Show full width on md and larger

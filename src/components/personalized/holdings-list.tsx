@@ -1,19 +1,24 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight } from 'lucide-react'
+import { ArrowUpRight, ArrowDownRight, ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useVirtualPortfolio } from '@/hooks/use-virtual-trading'
 import { VirtualTradingService } from '@/services/virtual-trading.service'
 import { useState } from 'react'
-import type { VirtualHolding } from '@/types/virtual-trading'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 
-interface HoldingsListProps {
-  onTrade?: (symbolCode: string, mode: 'BUY' | 'SELL') => void
-}
-
-export function HoldingsList({ onTrade }: HoldingsListProps) {
+export function HoldingsList() {
   const { data: portfolio, isLoading } = useVirtualPortfolio()
   const [sortBy, setSortBy] = useState<'value' | 'profit' | 'percentage'>('value')
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 5
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('vi-VN', {
@@ -42,9 +47,21 @@ export function HoldingsList({ onTrade }: HoldingsListProps) {
     }
   })
 
+  // Pagination
+  const totalPages = Math.ceil(sortedHoldings.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const paginatedHoldings = sortedHoldings.slice(startIndex, endIndex)
+
+  // Reset to page 1 when sort changes
+  const handleSortChange = (newSort: 'value' | 'profit' | 'percentage') => {
+    setSortBy(newSort)
+    setCurrentPage(1)
+  }
+
   if (isLoading) {
     return (
-      <Card>
+      <Card className="h-full">
         <CardHeader>
           <CardTitle>Danh mục đầu tư</CardTitle>
           <CardDescription>Cổ phiếu đang nắm giữ</CardDescription>
@@ -68,7 +85,7 @@ export function HoldingsList({ onTrade }: HoldingsListProps) {
 
   if (holdings.length === 0) {
     return (
-      <Card>
+      <Card className="h-full">
         <CardHeader>
           <CardTitle>Danh mục đầu tư</CardTitle>
           <CardDescription>Cổ phiếu đang nắm giữ</CardDescription>
@@ -84,7 +101,7 @@ export function HoldingsList({ onTrade }: HoldingsListProps) {
   }
 
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
@@ -95,7 +112,7 @@ export function HoldingsList({ onTrade }: HoldingsListProps) {
             <Button
               variant={sortBy === 'value' ? 'default' : 'outline'}
               size="sm"
-              onClick={() => setSortBy('value')}
+              onClick={() => handleSortChange('value')}
               className="text-xs h-8"
             >
               Giá trị
@@ -103,7 +120,7 @@ export function HoldingsList({ onTrade }: HoldingsListProps) {
             <Button
               variant={sortBy === 'profit' ? 'default' : 'outline'}
               size="sm"
-              onClick={() => setSortBy('profit')}
+              onClick={() => handleSortChange('profit')}
               className="text-xs h-8"
             >
               Lợi nhuận
@@ -111,7 +128,7 @@ export function HoldingsList({ onTrade }: HoldingsListProps) {
             <Button
               variant={sortBy === 'percentage' ? 'default' : 'outline'}
               size="sm"
-              onClick={() => setSortBy('percentage')}
+              onClick={() => handleSortChange('percentage')}
               className="text-xs h-8"
             >
               %
@@ -120,39 +137,49 @@ export function HoldingsList({ onTrade }: HoldingsListProps) {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="divide-y">
-          {sortedHoldings.map((holding) => {
-            const profitLossPercentage = VirtualTradingService.parsePercentage(
-              holding.profitLossPercentage
-            )
-            const isPositive = holding.unrealizedProfitLoss >= 0
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Mã CK</TableHead>
+              <TableHead className="text-right">Số lượng</TableHead>
+              <TableHead className="text-right">Giá vốn</TableHead>
+              <TableHead className="text-right">Giá thị trường</TableHead>
+              <TableHead className="text-right">Giá trị</TableHead>
+              <TableHead className="text-right">Lãi/Lỗ dự kiến</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {paginatedHoldings.map((holding) => {
+              const profitLossPercentage = VirtualTradingService.parsePercentage(
+                holding.profitLossPercentage
+              )
+              const isPositive = holding.unrealizedProfitLoss >= 0
 
-            return (
-              <div
-                key={holding.id}
-                className="flex items-center justify-between py-4 first:pt-0 last:pb-0 hover:bg-muted/30 -mx-6 px-6 transition-colors"
-              >
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-baseline gap-2 mb-1.5">
-                    <h4 className="font-semibold text-base">{holding.symbolCode}</h4>
-                    <span className="text-xs text-muted-foreground truncate">
-                      {holding.symbolName}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                    <span>SL: {holding.quantity.toLocaleString('vi-VN')}</span>
-                    <span>TB: {formatCurrency(holding.averagePrice)}</span>
-                    <span>Hiện: {formatCurrency(holding.currentPrice)}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <div className="text-right">
-                    <div className="font-bold text-base mb-1">
-                      {formatCurrency(holding.currentValue)}
+              return (
+                <TableRow key={holding.id}>
+                  <TableCell>
+                    <div className="flex flex-col">
+                      <span className="font-semibold">{holding.symbolCode}</span>
+                      <span className="text-xs text-muted-foreground truncate">
+                        {holding.symbolName}
+                      </span>
                     </div>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {holding.quantity.toLocaleString('vi-VN')}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {formatCurrency(holding.averagePrice)}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {formatCurrency(holding.currentPrice)}
+                  </TableCell>
+                  <TableCell className="text-right font-semibold">
+                    {formatCurrency(holding.currentValue)}
+                  </TableCell>
+                  <TableCell className="text-right">
                     <div className={cn(
-                      'flex items-center gap-1 justify-end text-sm font-medium',
+                      'flex items-center gap-1 justify-end font-medium',
                       isPositive ? 'text-green-600' : 'text-red-600'
                     )}>
                       {isPositive ? (
@@ -160,42 +187,66 @@ export function HoldingsList({ onTrade }: HoldingsListProps) {
                       ) : (
                         <ArrowDownRight className="h-3 w-3" />
                       )}
-                      <span>
-                        {isPositive ? '+' : ''}
-                        {formatCurrency(holding.unrealizedProfitLoss)}
-                      </span>
-                      <span className="text-xs">
-                        ({isPositive ? '+' : ''}
-                        {profitLossPercentage.toFixed(2)}%)
-                      </span>
+                      <div className="flex flex-col items-end">
+                        <span>
+                          {isPositive ? '+' : ''}
+                          {formatCurrency(holding.unrealizedProfitLoss)}
+                        </span>
+                        <span className="text-xs">
+                          ({isPositive ? '+' : ''}
+                          {profitLossPercentage.toFixed(2)}%)
+                        </span>
+                      </div>
                     </div>
-                  </div>
-
-                  {onTrade && (
-                    <div className="flex gap-1.5">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-8 w-8 p-0"
-                        onClick={() => onTrade(holding.symbolCode, 'BUY')}
-                      >
-                        <ArrowUpRight className="h-3.5 w-3.5 text-green-600" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-8 w-8 p-0"
-                        onClick={() => onTrade(holding.symbolCode, 'SELL')}
-                      >
-                        <ArrowDownRight className="h-3.5 w-3.5 text-red-600" />
-                      </Button>
-                    </div>
-                  )}
-                </div>
+                  </TableCell>
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+        
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between mt-4">
+            <p className="text-sm text-muted-foreground">
+              Hiển thị {startIndex + 1}-{Math.min(endIndex, sortedHoldings.length)} trong số {sortedHoldings.length} mã
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="h-8"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Trước
+              </Button>
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setCurrentPage(page)}
+                    className="h-8 w-8"
+                  >
+                    {page}
+                  </Button>
+                ))}
               </div>
-            )
-          })}
-        </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="h-8"
+              >
+                Sau
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   )

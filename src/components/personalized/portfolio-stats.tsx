@@ -18,8 +18,8 @@ export function PortfolioStats() {
 
   if (isLoading) {
     return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {[...Array(4)].map((_, i) => (
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {[...Array(3)].map((_, i) => (
           <Card key={i} className="overflow-hidden">
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-muted/50 to-muted/20 animate-pulse" />
@@ -40,78 +40,74 @@ export function PortfolioStats() {
 
   const totalAssetValue = portfolio?.totalAssetValue || 0
   const totalProfitLoss = portfolio?.totalProfitLoss || 0
+  const unrealizedProfitLoss = portfolio?.unrealizedProfitLoss || 0
+  const realizedProfitLoss = portfolio?.realizedProfitLoss || 0
   const profitLossPercentage = VirtualTradingService.parsePercentage(portfolio?.profitLossPercentage)
-  const isPositive = totalProfitLoss >= 0
-  const cashBalance = portfolio?.cashBalance || 0
-  const stockValue = portfolio?.stockValue || 0
-  const totalTransactions = portfolio?.totalTransactions || 0
-  const holdingsCount = portfolio?.holdings?.length || 0
+  const isPositiveTotal = totalProfitLoss >= 0
+  const isPositiveUnrealized = unrealizedProfitLoss >= 0
+  const isPositiveRealized = realizedProfitLoss >= 0
+  
+  // Calculate unrealized and realized percentages
+  const initialBalance = 10000000000 // 10 billion VND
+  const unrealizedPercentage = totalAssetValue > 0 ? (unrealizedProfitLoss / (totalAssetValue - unrealizedProfitLoss)) * 100 : 0
+  const realizedPercentage = initialBalance > 0 ? (realizedProfitLoss / initialBalance) * 100 : 0
 
   const stats = [
     {
       title: 'Tổng tài sản',
       value: formatCurrency(totalAssetValue),
+      trendValue: `${isPositiveTotal ? '+' : ''}${profitLossPercentage.toFixed(2)}%`,
+      trend: isPositiveTotal ? 'up' : 'down',
       icon: DollarSign,
-      description: 'Giá trị danh mục',
     },
     {
-      title: 'Lợi nhuận/Lỗ',
-      value: formatCurrency(Math.abs(totalProfitLoss)),
-      icon: isPositive ? TrendingUp : TrendingDown,
-      description: 'So với vốn ban đầu',
-      trend: isPositive ? 'up' : 'down',
-      trendValue: `${isPositive ? '+' : ''}${profitLossPercentage.toFixed(2)}%`,
+      title: 'Lợi nhuận dự kiến',
+      value: formatCurrency(Math.abs(unrealizedProfitLoss)),
+      icon: isPositiveUnrealized ? TrendingUp : TrendingDown,
+      trend: isPositiveUnrealized ? 'up' : 'down',
+      trendValue: `${isPositiveUnrealized ? '+' : ''}${unrealizedPercentage.toFixed(2)}%`,
     },
     {
-      title: 'Giá trị cổ phiếu',
-      value: formatCurrency(stockValue),
+      title: 'Lợi nhuận đã thực hiện',
+      value: formatCurrency(Math.abs(realizedProfitLoss)),
       icon: Activity,
-      description: `${holdingsCount} mã đang nắm giữ`,
-    },
-    {
-      title: 'Số giao dịch',
-      value: totalTransactions.toLocaleString('vi-VN'),
-      icon: Award,
-      description: 'Tổng lệnh đã thực hiện',
-    },
+      trend: isPositiveRealized ? 'up' : 'down',
+      trendValue: `${isPositiveRealized ? '+' : ''}${realizedPercentage.toFixed(2)}%`,
+    }
   ]
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
       {stats.map((stat, index) => {
         const Icon = stat.icon
         return (
           <Card key={index}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <div className="space-y-1">
-                <CardTitle className="text-xs font-medium text-muted-foreground">
+            <CardContent className="flex flex-row items-center gap-4 justify-between">
+              <div className="size-16 bg-iqx-primary/20 flex items-center justify-center rounded-full">
+                <div className="h-10 w-10 bg-iqx-primary/80 rounded-full flex items-center justify-center">
+                  <Icon className="h-5 w-5 text-white" />
+                </div>
+              </div>
+              <div className="space-y-1 flex-1">
+                <CardTitle className="text-sm uppercase font-medium text-muted-foreground mb-0">
                   {stat.title}
                 </CardTitle>
                 <div className={cn(
-                  "text-2xl font-bold tracking-tight",
+                  "text-lg font-bold tracking-tight",
                   stat.trend === 'up'
                     ? 'text-green-600'
                     : stat.trend === 'down'
-                    ? 'text-red-600'
-                    : ''
+                      ? 'text-red-600'
+                      : ''
                 )}>
                   {stat.value}
                 </div>
               </div>
-              <div className="h-10 w-10 rounded-lg border bg-muted/50 flex items-center justify-center">
-                <Icon className="h-5 w-5 text-muted-foreground" />
-              </div>
-            </CardHeader>
-
-            <CardContent className="pt-0">
               <div className="flex items-center justify-between">
-                <p className="text-xs text-muted-foreground">
-                  {stat.description}
-                </p>
                 {stat.trendValue && (
                   <div className={cn(
-                    "flex items-center gap-0.5 text-xs font-medium",
-                    stat.trend === 'up' ? 'text-green-600' : 'text-red-600'
+                    "flex items-center gap-0.5 text-xs font-medium p-1 rounded px-2",
+                    stat.trend === 'up' ? 'text-green-600 bg-green-500/10' : 'text-red-600 bg-red-500/10'
                   )}>
                     {stat.trend === 'up' ? (
                       <ArrowUpRight className="h-3 w-3" />

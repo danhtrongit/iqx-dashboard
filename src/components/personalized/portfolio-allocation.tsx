@@ -1,10 +1,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { useVirtualPortfolio } from '@/hooks/use-virtual-trading'
-import { useMemo, useEffect, useRef } from 'react'
+import { useMemo, useEffect, useRef, useState } from 'react'
 import * as echarts from 'echarts'
 import type { EChartsOption } from 'echarts'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
-// Beautiful color palette
+// Extended color palette - enough for 50+ holdings
 const COLOR_PALETTE = [
   '#10b981', // Green
   '#8b5cf6', // Purple
@@ -14,14 +16,59 @@ const COLOR_PALETTE = [
   '#eab308', // Yellow
   '#06b6d4', // Cyan
   '#f97316', // Red-Orange
+  '#14b8a6', // Teal
+  '#ef4444', // Red
+  '#84cc16', // Lime
+  '#a855f7', // Violet
+  '#22c55e', // Emerald
+  '#f43f5e', // Rose
+  '#0ea5e9', // Sky
+  '#eab308', // Amber
+  '#d946ef', // Fuchsia
+  '#06b6d4', // Cyan-2
+  '#f97316', // Orange-2
+  '#10b981', // Green-2
+  '#6366f1', // Indigo
+  '#8b5cf6', // Purple-2
+  '#ec4899', // Pink-2
+  '#14b8a6', // Teal-2
+  '#84cc16', // Lime-2
+  '#f59e0b', // Amber-2
+  '#22c55e', // Emerald-2
+  '#0ea5e9', // Sky-2
+  '#a855f7', // Violet-2
+  '#ef4444', // Red-2
+  '#d946ef', // Fuchsia-2
+  '#f43f5e', // Rose-2
+  '#6366f1', // Indigo-2
+  '#10b981', // Green-3
+  '#3b82f6', // Blue-3
+  '#f59e0b', // Orange-3
+  '#ec4899', // Pink-3
+  '#14b8a6', // Teal-3
+  '#84cc16', // Lime-3
+  '#8b5cf6', // Purple-3
+  '#22c55e', // Emerald-3
+  '#f97316', // Red-Orange-3
+  '#a855f7', // Violet-3
+  '#ef4444', // Red-3
+  '#d946ef', // Fuchsia-3
+  '#f43f5e', // Rose-3
+  '#0ea5e9', // Sky-3
+  '#eab308', // Amber-3
+  '#06b6d4', // Cyan-3
+  '#6366f1', // Indigo-3
 ]
 
 const CASH_COLOR = '#9ca3af' // Gray
+
+const ITEMS_PER_PAGE = 5
 
 export function PortfolioAllocation() {
   const { data: portfolio, isLoading } = useVirtualPortfolio()
   const chartRef = useRef<HTMLDivElement>(null)
   const chartInstanceRef = useRef<echarts.ECharts | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('vi-VN', {
@@ -69,6 +116,19 @@ export function PortfolioAllocation() {
       color: item.itemStyle.color,
     }))
   }, [chartData, portfolio])
+
+  // Pagination logic
+  const totalPages = Math.ceil(allocationList.length / ITEMS_PER_PAGE)
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+  const endIndex = startIndex + ITEMS_PER_PAGE
+  const paginatedList = useMemo(() => {
+    return allocationList.slice(startIndex, endIndex)
+  }, [allocationList, startIndex, endIndex])
+
+  // Reset to first page when data changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [allocationList.length])
 
   // Initialize and update ECharts
   useEffect(() => {
@@ -208,7 +268,6 @@ export function PortfolioAllocation() {
       <Card>
         <CardHeader>
           <CardTitle>Phân bổ tài sản</CardTitle>
-          <CardDescription>Tỷ trọng các khoản đầu tư</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-12">
@@ -239,7 +298,6 @@ export function PortfolioAllocation() {
     <Card>
       <CardHeader>
         <CardTitle className="text-lg font-semibold">Phân bổ tài sản</CardTitle>
-        <CardDescription className="text-sm">Tỷ trọng đầu tư</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col lg:flex-row gap-6 items-start">
@@ -248,7 +306,7 @@ export function PortfolioAllocation() {
           
           {/* Legend List */}
           <div className="flex-1 w-full space-y-2">
-            {allocationList.map((item, index) => (
+            {paginatedList.map((item, index) => (
               <div
                 key={index}
                 className="flex items-center justify-between p-2.5 rounded-lg hover:bg-muted/40 transition-colors"
@@ -270,6 +328,50 @@ export function PortfolioAllocation() {
                 </div>
               </div>
             ))}
+            
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between pt-2 mt-2 border-t">
+                <p className="text-sm text-muted-foreground">
+                  Hiển thị {startIndex + 1}-{Math.min(endIndex, allocationList.length)} trong số {allocationList.length} mã
+                </p>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="h-8"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Trước
+                  </Button>
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <Button
+                        key={page}
+                        variant={currentPage === page ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => setCurrentPage(page)}
+                        className="h-8 w-8"
+                      >
+                        {page}
+                      </Button>
+                    ))}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="h-8"
+                  >
+                    Sau
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
             
             {/* Total Summary */}
             <div className="pt-2 mt-2 border-t">

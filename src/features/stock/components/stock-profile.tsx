@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { useCompany } from '@/hooks/use-company'
 import { useStockFavorite } from '@/hooks/use-watchlist'
 import { useVirtualPortfolio, useStockPrice, useCreatePortfolio } from '@/hooks/use-virtual-trading'
+import { useTickerDetail, useTickerPriceTrend } from '@/hooks/use-ticker-detail'
 import { CompanyService } from '@/services/company.service'
-import { VirtualTradingService } from '@/services/virtual-trading.service'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -12,15 +12,10 @@ import { TradingModal } from '@/components/trading/trading-modal'
 import {
   AlertCircle,
   Building2,
-  Calendar,
-  DollarSign,
-  Activity,
-  Heart,
-  Globe,
-  BarChart3,
   TrendingUp,
   TrendingDown,
-  Plus
+  Plus,
+  Activity,
 } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 
@@ -46,13 +41,14 @@ export function StockProfile({ ticker = 'VIC' }: StockProfileProps) {
     enabled: !!ticker,
   })
 
+  const { data: tickerDetail, isLoading: tickerDetailLoading } = useTickerDetail(ticker, {
+    enabled: !!ticker,
+  })
+
+  const priceTrend = useTickerPriceTrend(tickerDetail?.tickerData)
+
   const createPortfolioMutation = useCreatePortfolio()
 
-  const {
-    isInWatchlist,
-    isPending,
-    toggle
-  } = useStockFavorite(ticker)
 
   // Get current holding for this stock
   const currentHolding = portfolio?.holdings.find(h => h.symbolCode === ticker)
@@ -85,58 +81,35 @@ export function StockProfile({ ticker = 'VIC' }: StockProfileProps) {
     )
   }
 
-  const riskLevel = CompanyService.getCompanyRiskLevel(company)
-
   return (
     <Card>
       <CardHeader>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-2">
-            <CardTitle className='text-2xl flex items-center gap-3'>
-              <span>{company.ticker}</span>
-              <Button
-                variant={isInWatchlist ? "default" : "outline"}
-                size="sm"
-                onClick={toggle}
-                disabled={isPending}
-                className="h-8 px-3"
-              >
-                <Heart
-                  className={`h-4 w-4 mr-2 ${
-                    isInWatchlist
-                      ? 'fill-current'
-                      : ''
-                  }`}
-                />
-                {isInWatchlist ? 'Đã yêu thích' : 'Yêu thích'}
-              </Button>
-            </CardTitle>
+            <div className="flex items-baseline gap-4 flex-wrap">
+              <CardTitle className='text-3xl font-bold'>
+                {company.ticker}
+              </CardTitle>
+              {priceTrend && (
+                <div className="flex items-baseline gap-3">
+                  <span className="text-2xl font-bold">
+                    {(priceTrend.currentPrice * 1000).toLocaleString('vi-VN')}
+                  </span>
+                  <span className={`text-lg font-semibold ${
+                    priceTrend.isPositive ? 'text-green-600' :
+                    priceTrend.isNegative ? 'text-red-600' : ''
+                  }`}>
+                    {priceTrend.priceChange > 0 ? '+' : ''}
+                    {(priceTrend.priceChange * 1000).toLocaleString('vi-VN')}
+                    ({priceTrend.priceChangePercent > 0 ? '+' : ''}
+                    {(priceTrend.priceChangePercent * 100).toFixed(2)}%)
+                  </span>
+                </div>
+              )}
+            </div>
             <CardDescription className="text-base">
               {company.viOrganShortName || company.enOrganShortName || company.viOrganName || company.enOrganName}
             </CardDescription>
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="outline" className="text-xs">
-                <Building2 className="h-3 w-3 mr-1" />
-                {company.sector}
-              </Badge>
-              {company.rating && (
-                <Badge variant="outline" className="text-xs">
-                  {company.rating}
-                </Badge>
-              )}
-              {company.exchange && (
-                <Badge variant="secondary" className="text-xs">
-                  {company.exchange}
-                </Badge>
-              )}
-              <Badge
-                variant={riskLevel === 'low' ? 'default' : riskLevel === 'medium' ? 'secondary' : 'destructive'}
-                className="text-xs"
-              >
-                {riskLevel === 'low' ? 'Rủi ro thấp' :
-                 riskLevel === 'medium' ? 'Rủi ro trung bình' : 'Rủi ro cao'}
-              </Badge>
-            </div>
           </div>
 
           {/* Trading Buttons */}
@@ -181,49 +154,6 @@ export function StockProfile({ ticker = 'VIC' }: StockProfileProps) {
       </CardHeader>
 
       <CardContent className="space-y-6">
-        {/* Key Metrics */}
-        <div className='grid grid-cols-2 gap-4 lg:grid-cols-4'>
-          <div className='text-center p-4 bg-muted/30 rounded-lg'>
-            <div className='flex items-center justify-center gap-2 text-sm text-muted-foreground mb-2'>
-              <DollarSign className="h-4 w-4" />
-              Giá hiện tại
-            </div>
-            <div className='text-xl font-bold'>
-              {CompanyService.formatPrice(company.currentPrice || 0)}
-            </div>
-          </div>
-
-          <div className='text-center p-4 bg-muted/30 rounded-lg'>
-            <div className='flex items-center justify-center gap-2 text-sm text-muted-foreground mb-2'>
-              <Activity className="h-4 w-4" />
-              Vốn hóa
-            </div>
-            <div className='text-xl font-bold'>
-              {CompanyService.formatMarketCap(company.marketCap || 0)}
-            </div>
-          </div>
-
-          <div className='text-center p-4 bg-muted/30 rounded-lg'>
-            <div className='flex items-center justify-center gap-2 text-sm text-muted-foreground mb-2'>
-              <BarChart3 className="h-4 w-4" />
-              Số CP (M)
-            </div>
-            <div className='text-xl font-bold'>
-              {((company.numberOfSharesMktCap || 0) / 1000000).toFixed(1)}M
-            </div>
-          </div>
-
-          <div className='text-center p-4 bg-muted/30 rounded-lg'>
-            <div className='flex items-center justify-center gap-2 text-sm text-muted-foreground mb-2'>
-              <Globe className="h-4 w-4" />
-              Sở hữu NN
-            </div>
-            <div className='text-xl font-bold'>
-              {CompanyService.formatPercentage(company.foreignerPercentage || 0)}
-            </div>
-          </div>
-        </div>
-
         {/* Financial Ratios - Only show if data available */}
         {(company.pe || company.pb || company.roe) && (
           <div>
@@ -261,7 +191,7 @@ export function StockProfile({ ticker = 'VIC' }: StockProfileProps) {
                 <div className='text-center'>
                   <div className='text-xs text-muted-foreground'>EPS</div>
                   <div className='text-lg font-semibold'>
-                    {CompanyService.formatPrice(company.eps)}
+                    {CompanyService.formatPrice(company.eps * 1000)}
                   </div>
                 </div>
               )}
@@ -277,95 +207,177 @@ export function StockProfile({ ticker = 'VIC' }: StockProfileProps) {
           </div>
         )}
 
-        {/* Additional Info */}
-        <div className='grid grid-cols-2 gap-4 sm:grid-cols-3'>
-          <div>
-            <div className='text-xs text-muted-foreground mb-1'>Sở hữu Nhà nước</div>
-            <div className='text-sm font-semibold'>
-              {CompanyService.formatPercentage(company.statePercentage || 0)}
-            </div>
-          </div>
-
-          <div>
-            <div className='text-xs text-muted-foreground mb-1'>Free Float</div>
-            <div className='text-sm font-semibold'>
-              {CompanyService.formatPercentage(company.freeFloatPercentage || 0)}
-            </div>
-          </div>
-
-          {company.listingDate && (
-            <div>
-              <div className='text-xs text-muted-foreground mb-1 flex items-center gap-1'>
-                <Calendar className="h-3 w-3" />
-                Ngày niêm yết
-              </div>
-              <div className='text-sm font-semibold'>
-                {new Date(company.listingDate).toLocaleDateString('vi-VN')}
-              </div>
+        {/* Company Profile & Ticker Detail */}
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
+          {/* Company Profile - Left */}
+          {(company.profile || company.enProfile) && (
+            <div className='bg-muted/20 rounded-lg p-4'>
+              <h3 className='text-lg font-semibold mb-3 flex items-center gap-2'>
+                <Building2 className="h-4 w-4" />
+                Giới thiệu công ty
+              </h3>
+              <div
+                className='text-base text-muted-foreground leading-relaxed prose prose-sm max-w-none prose-p:mb-2 prose-p:mt-0'
+                dangerouslySetInnerHTML={{
+                  __html: company.profile || company.enProfile || ''
+                }}
+              />
             </div>
           )}
-        </div>
 
-        {/* Company Profile */}
-        {(company.profile || company.enProfile) && (
-          <div className='bg-muted/20 rounded-lg p-4'>
-            <h3 className='text-sm font-semibold mb-3 flex items-center gap-2'>
-              <Building2 className="h-4 w-4" />
-              Giới thiệu công ty
-            </h3>
-            <div
-              className='text-sm text-muted-foreground leading-relaxed prose prose-sm max-w-none prose-p:mb-2 prose-p:mt-0'
-              dangerouslySetInnerHTML={{
-                __html: company.profile || company.enProfile || ''
-              }}
-            />
-          </div>
-        )}
+          {/* Ticker Detail - Right */}
+          {tickerDetail?.tickerData ? (
+            <div className='bg-muted/20 rounded-lg p-4'>
+              <h3 className='text-lg font-semibold mb-3 flex items-center gap-2'>
+                <Activity className="h-4 w-4" />
+                Thông tin giao dịch
+              </h3>
+              <div className='grid grid-cols-2 gap-3'>
+                {/* Left Column */}
+                <div className='space-y-3'>
+                  {/* Price Trend */}
+                  {priceTrend && (
+                    <div className='space-y-2'>
+                      <div className='flex justify-between items-center pb-2 border-b'>
+                        <span className='text-sm text-muted-foreground'>Giá hiện tại</span>
+                        <span className='font-semibold text-sm'>
+                          {(priceTrend.currentPrice * 1000).toLocaleString('vi-VN')} ₫
+                        </span>
+                      </div>
+                      <div className='flex justify-between items-center'>
+                        <span className='text-sm text-muted-foreground'>Thay đổi</span>
+                        <span className={`font-medium text-sm ${
+                          priceTrend.isPositive ? 'text-green-600' :
+                          priceTrend.isNegative ? 'text-red-600' : ''
+                        }`}>
+                          {priceTrend.priceChange > 0 ? '+' : ''}
+                          {(priceTrend.priceChange * 1000).toLocaleString('vi-VN')} ₫
+                          ({priceTrend.priceChangePercent > 0 ? '+' : ''}
+                          {(priceTrend.priceChangePercent * 100).toFixed(2)}%)
+                        </span>
+                      </div>
+                    </div>
+                  )}
 
-        {/* Company Summary */}
-        <div className='bg-muted/20 rounded-lg p-4'>
-          <p className='text-sm text-muted-foreground leading-relaxed'>
-            {CompanyService.generateCompanySummary(company)}
-          </p>
-        </div>
-
-        {/* Current Holdings Display */}
-        {currentHolding && (
-          <div className='bg-muted/30 rounded-lg p-4'>
-            <h3 className='font-semibold mb-3 flex items-center gap-2'>
-              <BarChart3 className="h-4 w-4" />
-              Sở hữu hiện tại
-            </h3>
-            <div className='space-y-3'>
-              <div className='flex justify-between items-center'>
-                <span className='text-muted-foreground'>Số lượng</span>
-                <span className='font-semibold'>{currentHolding.quantity.toLocaleString()}</span>
-              </div>
-              <div className='flex justify-between items-center'>
-                <span className='text-muted-foreground'>Giá mua TB</span>
-                <span className='font-semibold'>{CompanyService.formatPrice(currentHolding.averagePrice)}</span>
-              </div>
-              <div className='flex justify-between items-center'>
-                <span className='text-muted-foreground'>Giá trị hiện tại</span>
-                <span className='font-semibold'>{CompanyService.formatPrice(currentHolding.currentValue)}</span>
-              </div>
-              <div className='flex justify-between items-center pt-2 border-t'>
-                <span className='text-muted-foreground'>P&L</span>
-                <div className='text-right'>
-                  <div className={`font-semibold ${
-                    (currentHolding.unrealizedProfitLoss || 0) > 0 ? 'text-green-600' :
-                    (currentHolding.unrealizedProfitLoss || 0) < 0 ? 'text-red-600' : 'text-muted-foreground'
-                  }`}>
-                    {CompanyService.formatPrice(currentHolding.unrealizedProfitLoss || 0)}
+                  {/* Financial Metrics */}
+                  <div className='space-y-2 pt-2 border-t'>
+                    {tickerDetail.tickerData.roe !== undefined && (
+                      <div className='flex justify-between items-center'>
+                        <span className='text-sm text-muted-foreground'>ROE</span>
+                        <span className='font-medium text-sm'>
+                          {CompanyService.formatPercentage(tickerDetail.tickerData.roe)}
+                        </span>
+                      </div>
+                    )}
+                    {tickerDetail.tickerData.roa !== undefined && (
+                      <div className='flex justify-between items-center'>
+                        <span className='text-sm text-muted-foreground'>ROA</span>
+                        <span className='font-medium text-sm'>
+                          {CompanyService.formatPercentage(tickerDetail.tickerData.roa)}
+                        </span>
+                      </div>
+                    )}
+                    {tickerDetail.tickerData.bienloinhuan !== undefined && (
+                      <div className='flex justify-between items-center'>
+                        <span className='text-sm text-muted-foreground'>Biên LN</span>
+                        <span className='font-medium text-sm'>
+                          {CompanyService.formatPercentage(tickerDetail.tickerData.bienloinhuan)}
+                        </span>
+                      </div>
+                    )}
+                    {tickerDetail.tickerData.pe !== undefined && (
+                      <div className='flex justify-between items-center'>
+                        <span className='text-sm text-muted-foreground'>P/E</span>
+                        <span className='font-medium text-sm'>{tickerDetail.tickerData.pe.toFixed(2)}</span>
+                      </div>
+                    )}
                   </div>
-                  <div className='text-xs text-muted-foreground'>
-                    ({VirtualTradingService.parsePercentage(currentHolding.profitLossPercentage).toFixed(2)}%)
+                </div>
+
+                {/* Right Column */}
+                <div className='space-y-3'>
+                  {/* More Financial Metrics */}
+                  <div className='space-y-2'>
+                    {tickerDetail.tickerData.pb !== undefined && (
+                      <div className='flex justify-between items-center'>
+                        <span className='text-sm text-muted-foreground'>P/B</span>
+                        <span className='font-medium text-sm'>{tickerDetail.tickerData.pb.toFixed(2)}</span>
+                      </div>
+                    )}
+                    {tickerDetail.tickerData.eps_pha_loang !== undefined && (
+                      <div className='flex justify-between items-center'>
+                        <span className='text-sm text-muted-foreground'>EPS</span>
+                        <span className='font-medium text-sm'>
+                          {CompanyService.formatPrice(tickerDetail.tickerData.eps_pha_loang * 1000)}
+                        </span>
+                      </div>
+                    )}
+                    {tickerDetail.tickerData.gia_tri_so_sach !== undefined && (
+                      <div className='flex justify-between items-center'>
+                        <span className='text-sm text-muted-foreground'>BVPS</span>
+                        <span className='font-medium text-sm'>
+                          {CompanyService.formatPrice(tickerDetail.tickerData.gia_tri_so_sach * 1000)}
+                        </span>
+                      </div>
+                    )}
+                    {tickerDetail.tickerData.noVCSH !== undefined && (
+                      <div className='flex justify-between items-center'>
+                        <span className='text-sm text-muted-foreground'>Nợ/VCSH</span>
+                        <span className='font-medium text-sm'>{tickerDetail.tickerData.noVCSH.toFixed(2)}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Market Info */}
+                  <div className='space-y-2 pt-2 border-t'>
+                    {tickerDetail.tickerData.vonhoa !== undefined && (
+                      <div className='flex justify-between items-center'>
+                        <span className='text-sm text-muted-foreground'>Vốn hóa</span>
+                        <span className='font-medium text-sm'>
+                          {CompanyService.formatMarketCap(tickerDetail.tickerData.vonhoa)}
+                        </span>
+                      </div>
+                    )}
+                    {tickerDetail.tickerData.slcp !== undefined && (
+                      <div className='flex justify-between items-center'>
+                        <span className='text-sm text-muted-foreground'>SLCP</span>
+                        <span className='font-medium text-sm'>
+                          {((tickerDetail.tickerData.slcp) / 1000000).toFixed(0)}M
+                        </span>
+                      </div>
+                    )}
+                    {tickerDetail.tickerData.sohuungoai !== undefined && (
+                      <div className='flex justify-between items-center'>
+                        <span className='text-sm text-muted-foreground'>Sở hữu NN</span>
+                        <span className='font-medium text-sm'>
+                          {CompanyService.formatPercentage(tickerDetail.tickerData.sohuungoai)}
+                        </span>
+                      </div>
+                    )}
+                    {tickerDetail.tickerData.rsi !== undefined && (
+                      <div className='flex justify-between items-center'>
+                        <span className='text-sm text-muted-foreground'>RSI</span>
+                        <span className='font-medium text-sm'>{tickerDetail.tickerData.rsi.toFixed(1)}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
+
             </div>
-          </div>
-        )}
+          ) : tickerDetailLoading ? (
+            <div className='bg-muted/20 rounded-lg p-4'>
+              <Skeleton className="h-5 w-32 mb-3" />
+              <div className='space-y-2'>
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-2/3" />
+              </div>
+            </div>
+          ) : null}
+        </div>
+
       </CardContent>
 
       {/* Trading Modal */}

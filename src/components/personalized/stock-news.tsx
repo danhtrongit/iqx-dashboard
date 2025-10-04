@@ -1,25 +1,24 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { ExternalLink, Newspaper } from 'lucide-react'
-import { useWatchlist } from '@/hooks/use-watchlist'
+import { Newspaper, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useVirtualPortfolio } from '@/hooks/use-virtual-trading'
 import { useQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { getIqxNewsInfo } from '@/services/iqx-news.service'
 import type { IqxNewsItem } from '@/lib/schemas/news'
 
 export function StockNews() {
-  const { data: watchlist = [] } = useWatchlist()
   const { data: portfolio } = useVirtualPortfolio()
+  const [currentPage, setCurrentPage] = useState(1)
+  const ITEMS_PER_PAGE = 5
 
-  // Get all unique symbols from watchlist and holdings
+  // Get symbols from holdings only
   const symbolsList = useMemo(() => {
-    const watchlistSymbols = watchlist.map(item => item.symbol.symbol)
     const holdingSymbols = portfolio?.holdings.map(holding => holding.symbolCode) || []
-    return [...new Set([...watchlistSymbols, ...holdingSymbols])]
-  }, [watchlist, portfolio])
+    return [...new Set(holdingSymbols)]
+  }, [portfolio])
 
   // Fetch news for all symbols in parallel
   const { data: allNews = [], isLoading } = useQuery({
@@ -52,11 +51,22 @@ export function StockNews() {
 
       return uniqueNews.sort((a, b) =>
         new Date(b.update_date).getTime() - new Date(a.update_date).getTime()
-      ).slice(0, 20)
+      )
     },
     enabled: symbolsList.length > 0,
     staleTime: 5 * 60 * 1000, // 5 minutes
   })
+
+  // Pagination calculations
+  const totalPages = Math.ceil(allNews.length / ITEMS_PER_PAGE)
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+  const endIndex = startIndex + ITEMS_PER_PAGE
+  const currentNews = allNews.slice(startIndex, endIndex)
+
+  // Reset to page 1 when news data changes
+  useMemo(() => {
+    setCurrentPage(1)
+  }, [allNews.length])
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -104,7 +114,7 @@ export function StockNews() {
             Tin tức liên quan
           </CardTitle>
           <CardDescription>
-            Tin tức về các cổ phiếu đang theo dõi và nắm giữ
+            Tin tức về các cổ phiếu đang nắm giữ
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -134,14 +144,14 @@ export function StockNews() {
             Tin tức liên quan
           </CardTitle>
           <CardDescription>
-            Tin tức về các cổ phiếu đang theo dõi và nắm giữ
+            Tin tức về các cổ phiếu đang nắm giữ
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8 text-muted-foreground">
-            <p>Chưa có cổ phiếu nào trong danh sách theo dõi hoặc danh mục</p>
+            <p>Chưa có cổ phiếu nào trong danh mục</p>
             <p className="text-sm mt-2">
-              Hãy thêm cổ phiếu vào danh sách theo dõi hoặc bắt đầu giao dịch
+              Hãy bắt đầu giao dịch để xem tin tức liên quan
             </p>
           </div>
         </CardContent>
@@ -158,7 +168,7 @@ export function StockNews() {
             Tin tức liên quan
           </CardTitle>
           <CardDescription>
-            Tin tức về các cổ phiếu đang theo dõi và nắm giữ
+            Tin tức về các cổ phiếu đang nắm giữ
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -178,14 +188,15 @@ export function StockNews() {
           Tin tức liên quan
         </CardTitle>
         <CardDescription>
-          {allNews.length} tin tức về các cổ phiếu đang theo dõi và nắm giữ
+          {allNews.length} tin tức về các cổ phiếu đang nắm giữ
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {allNews.map((item: IqxNewsItem) => (
-            <div
+          {currentNews.map((item: IqxNewsItem) => (
+            <a
               key={item.id}
+              href={`/tin-tuc/${item.slug}`}
               className="flex gap-4 p-4 border rounded-lg hover:bg-accent/50 transition-colors group"
             >
               {item.news_image_url && (
@@ -218,29 +229,71 @@ export function StockNews() {
                     {item.news_short_content}
                   </p>
                 )}
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">
-                    {item.news_from_name}
-                  </span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-7 text-xs gap-1"
-                    asChild
-                  >
-                    <a
-                      href={item.news_source_link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Xem chi tiết <ExternalLink className="h-3 w-3" />
-                    </a>
-                  </Button>
-                </div>
               </div>
-            </div>
+            </a>
           ))}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex flex-col gap-4 mt-6 pt-4 border-t">
+            <div className="text-sm text-muted-foreground text-center">
+              {allNews.length} tin tức
+            </div>
+            <div className="flex items-center justify-center gap-1">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="h-9 w-9 p-0"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                // Show first page, last page, current page, and pages around current
+                const showPage = 
+                  page === 1 || 
+                  page === totalPages || 
+                  Math.abs(page - currentPage) <= 1
+
+                if (!showPage) {
+                  // Show ellipsis
+                  if (page === 2 && currentPage > 3) {
+                    return <span key={page} className="px-2">...</span>
+                  }
+                  if (page === totalPages - 1 && currentPage < totalPages - 2) {
+                    return <span key={page} className="px-2">...</span>
+                  }
+                  return null
+                }
+
+                return (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentPage(page)}
+                    className="h-9 w-9 p-0"
+                  >
+                    {page}
+                  </Button>
+                )
+              })}
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+                className="h-9 w-9 p-0"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   )

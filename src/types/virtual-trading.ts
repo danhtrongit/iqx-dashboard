@@ -12,12 +12,14 @@ export interface VirtualPortfolio {
   totalAssetValue: number
   stockValue: number
   totalProfitLoss: number
+  unrealizedProfitLoss: number
+  realizedProfitLoss: number
   profitLossPercentage: string  // API returns this as string like "-0.0515"
   totalTransactions: number
   successfulTrades: number
-  isActive: boolean
-  createdAt: string
-  updatedAt: string
+  isActive?: boolean
+  createdAt?: string
+  updatedAt?: string
   holdings: VirtualHolding[]
 }
 
