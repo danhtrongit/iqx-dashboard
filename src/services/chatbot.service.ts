@@ -1,8 +1,8 @@
 import type { ChatResponseData, SuggestionsResponse } from '@/types/chatbot'
 
 class ChatbotService {
-  // private baseUrl = 'https://bot.iqx.vn'
-  private baseUrl = 'http://localhost:5005'
+  private baseUrl = 'https://bot.iqx.vn'
+  // private baseUrl = 'http://localhost:5005'
   private sessionId: string
 
   constructor() {
