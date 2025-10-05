@@ -9,6 +9,7 @@ import LoadingBar from "react-top-loading-bar"
 import type { LoadingBarRef } from "react-top-loading-bar"
 import { useEffect, useRef } from "react"
 import { IQXChatbot } from "@/components/chatbot/IQXChatbot"
+import { Toaster } from "@/components/ui/sonner"
 
 export default function Root() {
   return (
@@ -45,6 +46,7 @@ function InnerApp() {
           <Outlet />
         </main>
         <IQXChatbot options={{ showSuggestions: true }} />
+        <Toaster />
       </div>
     </SearchProvider>
   )

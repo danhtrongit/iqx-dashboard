@@ -103,17 +103,17 @@ export function HoldingsList() {
   return (
     <Card className="h-full">
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <CardTitle className="text-lg font-semibold">Danh mục đầu tư</CardTitle>
             <CardDescription className="text-sm">{holdings.length} mã cổ phiếu</CardDescription>
           </div>
-          <div className="flex gap-1.5">
+          <div className="flex gap-1.5 flex-wrap">
             <Button
               variant={sortBy === 'value' ? 'default' : 'outline'}
               size="sm"
               onClick={() => handleSortChange('value')}
-              className="text-xs h-8"
+              className="text-xs h-8 px-2 sm:px-3"
             >
               Giá trị
             </Button>
@@ -121,7 +121,7 @@ export function HoldingsList() {
               variant={sortBy === 'profit' ? 'default' : 'outline'}
               size="sm"
               onClick={() => handleSortChange('profit')}
-              className="text-xs h-8"
+              className="text-xs h-8 px-2 sm:px-3"
             >
               Lợi nhuận
             </Button>
@@ -129,7 +129,7 @@ export function HoldingsList() {
               variant={sortBy === 'percentage' ? 'default' : 'outline'}
               size="sm"
               onClick={() => handleSortChange('percentage')}
-              className="text-xs h-8"
+              className="text-xs h-8 px-2 sm:px-3"
             >
               %
             </Button>
@@ -137,15 +137,16 @@ export function HoldingsList() {
         </div>
       </CardHeader>
       <CardContent>
-        <Table>
+        <div className="overflow-x-auto -mx-6 px-6">
+          <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Mã CK</TableHead>
-              <TableHead className="text-right">Số lượng</TableHead>
-              <TableHead className="text-right">Giá vốn</TableHead>
-              <TableHead className="text-right">Giá thị trường</TableHead>
-              <TableHead className="text-right">Giá trị</TableHead>
-              <TableHead className="text-right">Lãi/Lỗ dự kiến</TableHead>
+              <TableHead className="min-w-[100px]">Mã CK</TableHead>
+              <TableHead className="text-right min-w-[80px]">Số lượng</TableHead>
+              <TableHead className="text-right min-w-[100px]">Giá vốn</TableHead>
+              <TableHead className="text-right min-w-[100px]">Giá TT</TableHead>
+              <TableHead className="text-right min-w-[100px]">Giá trị</TableHead>
+              <TableHead className="text-right min-w-[120px]">Lãi/Lỗ dự kiến</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -204,9 +205,10 @@ export function HoldingsList() {
             })}
           </TableBody>
         </Table>
+        </div>
         
         {totalPages > 1 && (
-          <div className="flex items-center justify-between mt-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between mt-4 gap-3">
             <p className="text-sm text-muted-foreground">
               Hiển thị {startIndex + 1}-{Math.min(endIndex, sortedHoldings.length)} trong số {sortedHoldings.length} mã
             </p>
@@ -219,7 +221,7 @@ export function HoldingsList() {
                 className="h-8"
               >
                 <ChevronLeft className="h-4 w-4" />
-                Trước
+                <span className="hidden sm:inline">Trước</span>
               </Button>
               <div className="flex items-center gap-1">
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
@@ -241,7 +243,7 @@ export function HoldingsList() {
                 disabled={currentPage === totalPages}
                 className="h-8"
               >
-                Sau
+                <span className="hidden sm:inline">Sau</span>
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>

@@ -14,8 +14,13 @@ import { ReferralStatsCards } from "@/components/referral/referral-stats-cards";
 import { ReferralCodeCard } from "@/components/referral/referral-code-card";
 import { CommissionHistoryTable } from "@/components/referral/commission-history-table";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Info, ArrowRight } from "lucide-react";
 
 export default function ReferralPage() {
+  const navigate = useNavigate();
   const { data: referralCode, isLoading: isLoadingCode } = useMyReferralCode();
   const { data: stats, isLoading: isLoadingStats } = useReferralStats();
   const { data: commissions, isLoading: isLoadingCommissions } = useCommissions();
@@ -41,7 +46,6 @@ export default function ReferralPage() {
   const handleCopyLink = () => {
     if (referralCode?.code) {
       copyLinkMutation.mutate(referralCode.code);
-      toast.success("Đã sao chép link giới thiệu!");
     }
   };
 
@@ -62,6 +66,33 @@ export default function ReferralPage() {
           Giới thiệu bạn bè và nhận hoa hồng hấp dẫn
         </p>
       </div>
+
+      {/* Policy Info Card */}
+      <Card className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-blue-500/20">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
+                <Info className="h-5 w-5 text-blue-500" />
+              </div>
+              <div>
+                <p className="font-semibold">Chính sách Cộng tác viên IQX</p>
+                <p className="text-sm text-muted-foreground">
+                  Tìm hiểu chi tiết về cấu trúc hoa hồng và quy định chương trình
+                </p>
+              </div>
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={() => navigate("/partner-policy")}
+              className="shrink-0"
+            >
+              Xem chi tiết
+              <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Stats Cards */}
       <ReferralStatsCards

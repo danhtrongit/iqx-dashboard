@@ -20,8 +20,8 @@ export default function Header() {
             href: "/",
         },
         {
-            name: "Bộ lọc cổ phiếu",
-            href: "/bo-loc-co-phieu",
+            name: "Bộ lọc",
+            href: "/bo-loc",
         },
         {
             name: "Biểu đồ kỹ thuật",
@@ -31,21 +31,50 @@ export default function Header() {
             name: "Tin tức",
             href: "/tin-tuc",
         },
-   
+
         {
-            name: "Bảng xếp hạng",
+            name: "Xếp hạng",
             href: "/virtual-trading/leaderboard",
+        },
+        {
+            name: "Dự báo",
+            href: "/du-bao",
         },
     ]
 
     return (
         <header className="bg-background header-fixed peer/header sticky top-0 w-[inherit] z-50 py-1 shadow-xs min-h-16 md:h-28">
+            {/* Mobile promotional banner - Top of header */}
+            <div className="md:hidden w-full overflow-hidden bg-gradient-to-r from-purple-50 via-violet-50 to-indigo-50 dark:from-purple-950/20 dark:via-violet-950/20 dark:to-indigo-950/20 py-1.5 px-4">
+                <div className="flex animate-marquee">
+                    <span className="text-xs font-medium bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 bg-clip-text text-transparent whitespace-nowrap px-3">
+                        🎉 Khuyến mãi tháng 10-11-12: Nâng cấp Premium nhận gấp đôi lượt sử dụng Arix Pro AI • Phân tích chuyên nghiệp từ IQX ✨
+                    </span>
+                    <span className="text-xs font-medium bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 bg-clip-text text-transparent whitespace-nowrap px-3">
+                        🎉 Khuyến mãi tháng 10-11-12: Nâng cấp Premium nhận gấp đôi lượt sử dụng Arix Pro AI • Phân tích chuyên nghiệp từ IQX ✨
+                    </span>
+                </div>
+            </div>
             <div className="container mx-auto px-4 space-y-1">
                 {/* header main */}
                 <div className="flex items-center justify-between h-14">
-                    <Link to="/">
-                        <Logo className="size-10 md:size-12" />
-                    </Link>
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <Link to="/" className="shrink-0">
+                            <Logo className="size-10 md:size-12" />
+                        </Link>
+
+                        {/* Running promotional text */}
+                        <div className="hidden md:flex items-center overflow-hidden flex-1 min-w-0 max-w-2xl relative mr-2">
+                            <div className="flex animate-marquee">
+                                <span className="text-base font-medium bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 bg-clip-text text-transparent whitespace-nowrap px-4">
+                                    🎉 Khuyến mãi tháng 10-11-12: Nâng cấp Premium nhận gấp đôi lượt sử dụng Arix Pro AI • Phân tích chuyên nghiệp từ IQX ✨
+                                </span>
+                                <span className="text-base font-medium bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 bg-clip-text text-transparent whitespace-nowrap px-4">
+                                    🎉 Khuyến mãi tháng 10-11-12: Nâng cấp Premium nhận gấp đôi lượt sử dụng Arix Pro AI • Phân tích chuyên nghiệp từ IQX ✨
+                                </span>
+                            </div>
+                        </div>
+                    </div>
 
                     {/* Desktop Actions */}
                     <div className="hidden md:flex items-center gap-2">
@@ -77,14 +106,14 @@ export default function Header() {
                                             </Button>
                                         </Link>
                                     ))}
-                                    
+
                                     {/* Premium & Personal Links - Only when authenticated */}
                                     {isAuthenticated && (
                                         <>
                                             <div className="my-2 border-t" />
-                                            
+
                                             <Link to="/arix-pro" onClick={() => setIsOpen(false)}>
-                                                <Button 
+                                                <Button
                                                     className={cn(
                                                         "w-full justify-start text-left h-12 font-semibold",
                                                         "bg-gradient-to-r from-purple-500 via-violet-500 to-indigo-600",
@@ -99,9 +128,9 @@ export default function Header() {
                                                     <Zap className="size-4 ml-auto" />
                                                 </Button>
                                             </Link>
-                                            
+
                                             <Link to="/premium" onClick={() => setIsOpen(false)}>
-                                                <Button 
+                                                <Button
                                                     className={cn(
                                                         "w-full justify-start text-left h-12 font-semibold",
                                                         "bg-gradient-to-r from-yellow-500 via-amber-500 to-orange-500",
@@ -116,9 +145,9 @@ export default function Header() {
                                                     <Sparkles className="size-4 ml-auto" />
                                                 </Button>
                                             </Link>
-                                            
+
                                             <Link to="/ca-nhan" onClick={() => setIsOpen(false)}>
-                                                <Button 
+                                                <Button
                                                     variant="outline"
                                                     className={cn(
                                                         "w-full justify-start text-left h-12 font-medium",
@@ -147,13 +176,13 @@ export default function Header() {
                                 </Button>
                             </Link>
                         ))}
-                        
+
                         {/* Premium & Personal Links - Only when authenticated */}
                         {isAuthenticated && (
                             <>
                                 <Link to="/arix-pro">
-                                    <Button 
-                                        size="sm" 
+                                    <Button
+                                        size="sm"
                                         className={cn(
                                             "rounded-full uppercase whitespace-nowrap font-semibold",
                                             "bg-gradient-to-r from-purple-500 via-violet-500 to-indigo-600",
@@ -168,10 +197,10 @@ export default function Header() {
                                         <Zap className="size-3 ml-1.5" />
                                     </Button>
                                 </Link>
-                                
+
                                 <Link to="/premium">
-                                    <Button 
-                                        size="sm" 
+                                    <Button
+                                        size="sm"
                                         className={cn(
                                             "rounded-full uppercase whitespace-nowrap font-semibold",
                                             "bg-gradient-to-r from-yellow-500 via-amber-500 to-orange-500",
@@ -186,9 +215,9 @@ export default function Header() {
                                         <Sparkles className="size-3 ml-1.5" />
                                     </Button>
                                 </Link>
-                                
+
                                 <Link to="/ca-nhan">
-                                    <Button 
+                                    <Button
                                         size="sm"
                                         variant="outline"
                                         className={cn(

@@ -93,7 +93,7 @@ export function ReferralStatsCards({
       {/* Direct Referrals Card */}
       <Card className="border-l-4 border-l-purple-500 hover:shadow-md transition-shadow">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-medium">F1 trực tiếp</CardTitle>
+          <CardTitle className="text-sm font-medium">Tổng số người giới thiệu</CardTitle>
           <div className="p-2 bg-purple-100 dark:bg-purple-900/20 rounded-lg">
             <Gift className="size-4 text-purple-600 dark:text-purple-400" />
           </div>
@@ -107,7 +107,7 @@ export function ReferralStatsCards({
                 {stats?.directReferrals?.length || 0}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                Thành viên F1
+                Thành viên
               </p>
             </>
           )}

@@ -22,52 +22,52 @@ export default function StockDetail({ ticker }: { ticker: string }) {
           <StockProfile ticker={ticker} />
 
           <Tabs defaultValue="market-index" className="w-full">
-            <TabsList className="grid w-full grid-cols-7 h-auto rounded-none border-b bg-transparent p-0">
+            <TabsList className="grid w-full grid-cols-3 lg:grid-cols-8 h-auto  border-b bg-transparent p-0">
               <TabsTrigger
                 value="market-index"
-                className="relative rounded-none py-3 px-4 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-primary"
+                className="relative py-3 px-4 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-1 data-[state=active]:after:rounded-lg data-[state=active]:after:bg-blue-700"
               >
                 Giá
               </TabsTrigger>
               <TabsTrigger
                 value="peer-comparison"
-                className="relative rounded-none py-3 px-4 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-primary"
+                className="relative py-3 px-4 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-1 data-[state=active]:after:rounded-lg data-[state=active]:after:bg-blue-700"
               >
                 So sánh
               </TabsTrigger>
               <TabsTrigger
                 value="technical-analysis"
-                className="relative rounded-none py-3 px-4 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-primary"
+                className="relative py-3 px-4 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-1 data-[state=active]:after:rounded-lg data-[state=active]:after:bg-blue-700"
               >
                 Kỹ thuật
               </TabsTrigger>
               <TabsTrigger
                 value="organization"
-                className="relative rounded-none py-3 px-4 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-primary"
+                className="relative py-3 px-4 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-1 data-[state=active]:after:rounded-lg data-[state=active]:after:bg-blue-700"
               >
                 Tổ chức
               </TabsTrigger>
               <TabsTrigger
                 value="foreign-net"
-                className="relative rounded-none py-3 px-4 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-primary"
+                className="relative py-3 px-4 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-1 data-[state=active]:after:rounded-lg data-[state=active]:after:bg-blue-700"
               >
                 Khối ngoại
               </TabsTrigger>
               <TabsTrigger
                 value="financial-report"
-                className="relative rounded-none py-3 px-4 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-primary"
+                className="relative py-3 px-4 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-1 data-[state=active]:after:rounded-lg data-[state=active]:after:bg-blue-700"
               >
                 Tài chính
               </TabsTrigger>
               <TabsTrigger
                 value="analysis-report"
-                className="relative rounded-none py-3 px-4 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-primary"
+                className="relative py-3 px-4 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-1 data-[state=active]:after:rounded-lg data-[state=active]:after:bg-blue-700"
               >
                 Phân tích
               </TabsTrigger>
               <TabsTrigger
                 value="news"
-                className="relative rounded-none py-3 px-4 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-0.5 data-[state=active]:after:bg-primary"
+                className="relative py-3 px-4 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-1 data-[state=active]:after:rounded-lg data-[state=active]:after:bg-blue-700"
               >
                 Tin tức
               </TabsTrigger>

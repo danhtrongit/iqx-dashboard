@@ -65,7 +65,19 @@ export class SubscriptionService {
     const response: AxiosResponse<SubscriptionPackage[]> =
       await subscriptionHttp.get("/subscriptions/packages");
 
-    return response.data.map((pkg) => SubscriptionPackageSchema.parse(pkg));
+    
+    try {
+      const parsed = response.data.map((pkg) => {
+        console.log("Parsing package:", pkg);
+        const result = SubscriptionPackageSchema.parse(pkg);
+        console.log("Parsed result:", result);
+        return result;
+      });
+      return parsed;
+    } catch (error) {
+      console.error("Error parsing packages:", error);
+      throw error;
+    }
   }
 
   /**

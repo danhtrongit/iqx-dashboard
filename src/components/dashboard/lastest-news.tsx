@@ -1,14 +1,13 @@
 import { Link } from "react-router-dom"
 import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { ChevronRight, ChevronLeft } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 import { useNews } from "@/features/news/api/useNews"
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { Navigation, Pagination, Autoplay } from 'swiper/modules'
+import { Pagination, Autoplay } from 'swiper/modules'
 
 // Import Swiper styles
 import 'swiper/css'
-import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 
 export default function LastestNews() {
@@ -35,17 +34,13 @@ export default function LastestNews() {
                 ) : (
                     <div className="relative">
                         <Swiper
-                            modules={[Navigation, Pagination, Autoplay]}
+                            modules={[ Pagination, Autoplay]}
                             spaceBetween={16}
                             slidesPerView={2}
                             breakpoints={{
                                 1024: {
                                     slidesPerView: 4,
                                 },
-                            }}
-                            navigation={{
-                                nextEl: '.custom-swiper-button-next',
-                                prevEl: '.custom-swiper-button-prev',
                             }}
                             pagination={{
                                 el: '.custom-swiper-pagination',
@@ -89,15 +84,6 @@ export default function LastestNews() {
                                 </SwiperSlide>
                             ))}
                         </Swiper>
-
-                        {/* Custom Beautiful Navigation Buttons */}
-                        <button className="custom-swiper-button-prev absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 z-10 hidden lg:flex items-center justify-center w-10 h-10 rounded-full bg-background border border-border shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:bg-primary hover:text-primary-foreground group">
-                            <ChevronLeft className="w-5 h-5 transition-transform duration-300 group-hover:-translate-x-0.5" />
-                        </button>
-                        <button className="custom-swiper-button-next absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 z-10 hidden lg:flex items-center justify-center w-10 h-10 rounded-full bg-background border border-border shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:bg-primary hover:text-primary-foreground group">
-                            <ChevronRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-0.5" />
-                        </button>
-
                         {/* Custom Beautiful Pagination */}
                         <div className="custom-swiper-pagination flex justify-center items-center gap-2 mt-6"></div>
                     </div>

@@ -3,11 +3,10 @@ import { useAriXPro, formatTime } from "@/hooks/use-arix-pro";
 import { Send, Trash2, Sparkles, TrendingUp, Brain, Zap, Shield, Clock, BarChart3, FileText } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import type { StockAnalysisResponse } from "@/types/arix-pro";
+import { ApiUsageDisplay } from "@/components/charts/api-usage-display";
 
 export function AriXProChatbot() {
-  const { messages, isLoading, messagesEndRef, sendMessage, clearHistory } =
+  const { messages, isLoading, messagesEndRef, sendMessage, clearHistory, usage, isLoadingUsage, fetchUsage } =
     useAriXPro();
 
   const [inputValue, setInputValue] = useState("");
@@ -60,8 +59,8 @@ export function AriXProChatbot() {
     },
     {
       icon: FileText,
-      title: "Báo cáo chuyên sâu",
-      desc: "Từ các công ty CK hàng đầu",
+      title: "Phân tích chuyên sâu",
+      desc: "Tổng hợp từ dữ liệu thị trường",
       gradient: "from-indigo-500 to-blue-600",
     },
     {
@@ -87,95 +86,7 @@ export function AriXProChatbot() {
   return (
     <div className="h-screen flex items-center justify-center p-3 lg:p-4">
       <div className="w-full max-w-7xl h-[86vh] flex gap-3">
-        {/* Left Side - Features */}
-        <div className="hidden lg:flex lg:w-[340px] flex-col">
-          {/* Logo & Title */}
-          <div className="mb-4">
-            <div className="flex items-center gap-2.5 mb-3">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-indigo-600 blur-lg opacity-30" />
-                <div className="relative w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-md">
-                  <Sparkles className="w-5 h-5 text-white" />
-                </div>
-              </div>
-              <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                  AriX Pro
-                </h1>
-                <p className="text-[10px] text-muted-foreground">Phân tích thông minh</p>
-              </div>
-            </div>
-
-            <p className="text-muted-foreground text-xs leading-snug">
-              Mô hình AriX Pro độc quyền của IQX, tổng hợp dữ liệu từ các công ty chứng khoán hàng đầu.
-            </p>
-          </div>
-
-          {/* Features Grid */}
-          <div className="flex-1 overflow-y-auto space-y-3">
-            <h2 className="text-xs font-semibold mb-2 flex items-center gap-1.5">
-              <Zap className="w-3.5 h-3.5 text-purple-600" />
-              Tính năng
-            </h2>
-            
-            <div className="grid grid-cols-2 gap-2">
-              {features.map((feature, idx) => (
-                <div
-                  key={idx}
-                  className="group bg-white/40 dark:bg-gray-900/40 backdrop-blur-xl rounded-lg p-2.5 border border-gray-200/20 dark:border-gray-800/20 hover:border-purple-300/50 dark:hover:border-purple-700/50 transition-all hover:scale-105 cursor-pointer"
-                >
-                  <div className={`w-8 h-8 bg-gradient-to-br ${feature.gradient} rounded-lg flex items-center justify-center mb-2 shadow-sm group-hover:shadow-md transition-shadow`}>
-                    <feature.icon className="w-3.5 h-3.5 text-white" />
-                  </div>
-                  <h3 className="font-semibold text-[11px] mb-0.5 leading-tight">{feature.title}</h3>
-                  <p className="text-[10px] text-muted-foreground leading-tight">{feature.desc}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Stats */}
-            <div className="mt-3 bg-gradient-to-br from-purple-500/10 to-indigo-500/10 rounded-lg p-3 border border-purple-200/20 dark:border-purple-800/20">
-              <h3 className="font-semibold text-[11px] mb-2 flex items-center gap-1">
-                <BarChart3 className="w-3 h-3 text-purple-600" />
-                Thống kê
-              </h3>
-              <div className="grid grid-cols-3 gap-2 text-center">
-                <div>
-                  <div className="text-lg font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                    99%
-                  </div>
-                  <div className="text-[9px] text-muted-foreground">Chính xác</div>
-                </div>
-                <div>
-                  <div className="text-lg font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                    &lt;30s
-                  </div>
-                  <div className="text-[9px] text-muted-foreground">Thời gian</div>
-                </div>
-                <div>
-                  <div className="text-lg font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                    24/7
-                  </div>
-                  <div className="text-[9px] text-muted-foreground">Hoạt động</div>
-                </div>
-              </div>
-            </div>
-
-            {/* CTA */}
-            <div className="mt-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg p-3 text-white shadow-md">
-              <h3 className="font-bold text-xs mb-1">Bắt đầu phân tích</h3>
-              <p className="text-[10px] opacity-90 mb-2">
-                Nhập mã cổ phiếu bên phải
-              </p>
-              <div className="flex items-center gap-1 text-[9px] opacity-80">
-                <Sparkles className="w-2.5 h-2.5" />
-                <span>Powered by IQX</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Side - Chat */}
+        {/*  Left Side - Chat */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* Mobile Header */}
           <div className="flex items-center justify-between mb-2 lg:hidden">
@@ -216,9 +127,7 @@ export function AriXProChatbot() {
             </div>
           )}
 
-          {/* Chat Container */}
           <div className="flex-1 bg-white/40 dark:bg-gray-900/40 backdrop-blur-2xl rounded-xl border border-gray-200/20 dark:border-gray-800/20 shadow-lg overflow-hidden flex flex-col">
-            {/* Messages */}
             <div className="flex-1 overflow-y-auto px-3 lg:px-4 py-4 space-y-3">
               {showWelcome && (
                 <div className="flex items-center justify-center h-full">
@@ -253,27 +162,42 @@ export function AriXProChatbot() {
                   className={`flex gap-1.5 ${msg.sender === "user" ? "flex-row-reverse" : ""}`}
                 >
                   <div
-                    className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-[8px] font-bold ${
-                      msg.sender === "bot"
-                        ? "bg-gradient-to-br from-purple-500 to-indigo-600 text-white"
-                        : "bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
-                    }`}
+                    className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-[8px] font-bold ${msg.sender === "bot"
+                      ? "bg-gradient-to-br from-purple-500 to-indigo-600 text-white"
+                      : "bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                      }`}
                   >
                     {msg.sender === "user" ? "U" : <Sparkles className="w-3 h-3" />}
                   </div>
 
                   <div className="flex-1 max-w-xl space-y-1.5">
                     <div
-                      className={`rounded-lg px-3 py-2 ${
-                        msg.sender === "user"
-                          ? "bg-gradient-to-br from-purple-500 to-indigo-600 text-white ml-auto"
-                          : msg.type === "error"
+                      className={`rounded-lg px-3 py-2 ${msg.sender === "user"
+                        ? "bg-gradient-to-br from-purple-500 to-indigo-600 text-white ml-auto"
+                        : msg.type === "error"
                           ? "bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800"
                           : "bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50"
-                      }`}
+                        }`}
                     >
                       {msg.sender === "bot" ? (
-                        <div className="prose prose-sm dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&_p]:text-xs [&_p]:leading-relaxed">
+                        <div className="prose prose-sm dark:prose-invert max-w-none 
+                          [&>*:first-child]:mt-0 [&>*:last-child]:mb-0
+                          [&_p]:text-xs [&_p]:leading-relaxed [&_p]:my-2
+                          [&_h1]:text-sm [&_h1]:font-bold [&_h1]:my-2 [&_h1]:leading-tight
+                          [&_h2]:text-xs [&_h2]:font-semibold [&_h2]:my-2 [&_h2]:leading-tight
+                          [&_h3]:text-xs [&_h3]:font-semibold [&_h3]:my-1.5 [&_h3]:leading-tight
+                          [&_h4]:text-xs [&_h4]:font-medium [&_h4]:my-1.5 [&_h4]:leading-tight
+                          [&_ul]:text-xs [&_ul]:my-2 [&_ul]:leading-relaxed
+                          [&_ol]:text-xs [&_ol]:my-2 [&_ol]:leading-relaxed
+                          [&_li]:text-xs [&_li]:my-1 [&_li]:leading-relaxed
+                          [&_strong]:font-semibold [&_strong]:text-xs
+                          [&_em]:italic [&_em]:text-xs
+                          [&_table]:text-xs [&_table]:my-2
+                          [&_th]:text-xs [&_th]:font-semibold [&_th]:px-2 [&_th]:py-1
+                          [&_td]:text-xs [&_td]:px-2 [&_td]:py-1
+                          [&_hr]:my-2 [&_hr]:border-gray-200 [&_hr]:dark:border-gray-700
+                          [&_blockquote]:text-xs [&_blockquote]:my-2 [&_blockquote]:pl-3 [&_blockquote]:border-l-2
+                          [&_code]:text-[11px] [&_code]:bg-gray-100 [&_code]:dark:bg-gray-800 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded">
                           <ReactMarkdown>{msg.content}</ReactMarkdown>
                         </div>
                       ) : (
@@ -287,44 +211,6 @@ export function AriXProChatbot() {
                           <TrendingUp className="w-2.5 h-2.5" />
                           {msg.data.ticker} • {msg.data.totalReportsAnalyzed} báo cáo
                         </div>
-
-                        {(msg.data as StockAnalysisResponse).reports.map((r, i) => (
-                          <div
-                            key={i}
-                            className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-md p-2 space-y-1 hover:border-purple-300 dark:hover:border-purple-700 transition-colors"
-                          >
-                            <div className="flex items-start justify-between gap-1.5">
-                              <p className="text-[11px] font-medium flex-1 line-clamp-1">
-                                {r.title}
-                              </p>
-                              <Badge
-                                variant={
-                                  r.recommend === "MUA"
-                                    ? "default"
-                                    : r.recommend === "GIỮ"
-                                    ? "secondary"
-                                    : "destructive"
-                                }
-                                className="text-[8px] px-1 py-0 h-3.5"
-                              >
-                                {r.recommend}
-                              </Badge>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-1 text-[9px]">
-                              <div className="flex items-center gap-0.5">
-                                <span className="text-muted-foreground">Nguồn:</span>
-                                <span className="font-medium">{r.source}</span>
-                              </div>
-                              <div className="flex items-center gap-0.5">
-                                <span className="text-muted-foreground">MT:</span>
-                                <span className="font-semibold text-green-600">
-                                  {(Number(r.targetPrice) / 1000).toFixed(0)}K
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
 
                         {msg.data.usage && (
                           <div className="text-[8px] text-muted-foreground">
@@ -360,7 +246,6 @@ export function AriXProChatbot() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input */}
             <div className="border-t border-gray-200/20 dark:border-gray-800/20 bg-white/20 dark:bg-gray-900/20 backdrop-blur-xl p-2.5">
               <div className="flex items-end gap-1.5">
                 <textarea
@@ -391,9 +276,102 @@ export function AriXProChatbot() {
             </div>
           </div>
         </div>
+
+        {/* Right Side - Features */}
+        <div className="hidden lg:flex lg:w-[340px] flex-col">
+          <div className="mb-4">
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-indigo-600 blur-lg opacity-30" />
+                <div className="relative w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-md">
+                  <Sparkles className="w-5 h-5 text-white" />
+                </div>
+              </div>
+              <div>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                  AriX Pro
+                </h1>
+                <p className="text-[10px] text-muted-foreground">Phân tích thông minh</p>
+              </div>
+            </div>
+
+            <p className="text-muted-foreground text-xs leading-snug">
+              Mô hình AriX Pro độc quyền của IQX, tổng hợp dữ liệu từ các công ty chứng khoán hàng đầu.
+            </p>
+          </div>
+
+          <div className="flex-1 overflow-y-auto space-y-3">
+            <h2 className="text-xs font-semibold mb-2 flex items-center gap-1.5">
+              <Zap className="w-3.5 h-3.5 text-purple-600" />
+              Tính năng
+            </h2>
+
+            <div className="grid grid-cols-2 gap-2">
+              {features.map((feature, idx) => (
+                <div
+                  key={idx}
+                  className="group bg-white/40 dark:bg-gray-900/40 backdrop-blur-xl rounded-lg p-2.5 border border-gray-200/20 dark:border-gray-800/20 hover:border-purple-300/50 dark:hover:border-purple-700/50 transition-all hover:scale-105 cursor-pointer"
+                >
+                  <div className={`w-8 h-8 bg-gradient-to-br ${feature.gradient} rounded-lg flex items-center justify-center mb-2 shadow-sm group-hover:shadow-md transition-shadow`}>
+                    <feature.icon className="w-3.5 h-3.5 text-white" />
+                  </div>
+                  <h3 className="font-semibold text-[11px] mb-0.5 leading-tight">{feature.title}</h3>
+                  <p className="text-[10px] text-muted-foreground leading-tight">{feature.desc}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-3 bg-gradient-to-br from-purple-500/10 to-indigo-500/10 rounded-lg p-3 border border-purple-200/20 dark:border-purple-800/20">
+              <h3 className="font-semibold text-[11px] mb-2 flex items-center gap-1">
+                <BarChart3 className="w-3 h-3 text-purple-600" />
+                Thống kê
+              </h3>
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div>
+                  <div className="text-lg font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                    99%
+                  </div>
+                  <div className="text-[9px] text-muted-foreground">Chính xác</div>
+                </div>
+                <div>
+                  <div className="text-lg font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                    &lt;30s
+                  </div>
+                  <div className="text-[9px] text-muted-foreground">Thời gian</div>
+                </div>
+                <div>
+                  <div className="text-lg font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                    24/7
+                  </div>
+                  <div className="text-[9px] text-muted-foreground">Hoạt động</div>
+                </div>
+              </div>
+            </div>
+
+            {/* API Usage Display */}
+            <div className="mt-3">
+              <ApiUsageDisplay 
+                usage={usage} 
+                isLoading={isLoadingUsage} 
+                onRefresh={fetchUsage}
+                compact={false}
+              />
+            </div>
+
+            <div className="mt-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg p-3 text-white shadow-md">
+              <h3 className="font-bold text-xs mb-1">Bắt đầu phân tích</h3>
+              <p className="text-[10px] opacity-90 mb-2">
+                Nhập mã cổ phiếu bên phải
+              </p>
+              <div className="flex items-center gap-1 text-[9px] opacity-80">
+                <Sparkles className="w-2.5 h-2.5" />
+                <span>Powered by IQX</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Modal */}
       {showClearConfirm && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-900 rounded-lg p-4 max-w-xs w-full shadow-2xl animate-in fade-in zoom-in duration-150">

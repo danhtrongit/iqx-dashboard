@@ -88,3 +88,43 @@ export interface AriXProChatRequest {
   model?: string;
 }
 
+// Usage Response Schema
+export const UsageResponseSchema = z.object({
+  currentUsage: z.number(),
+  limit: z.number(),
+  remaining: z.number(),
+  resetDate: z.string(),
+});
+
+export type UsageResponse = z.infer<typeof UsageResponseSchema>;
+
+// Stats Daily Breakdown Schema
+export const StatsDailyBreakdownSchema = z.object({
+  date: z.string(),
+  requests: z.number(),
+  tokens: z.number(),
+});
+
+export type StatsDailyBreakdown = z.infer<typeof StatsDailyBreakdownSchema>;
+
+// Stats Response Schema
+export const StatsResponseSchema = z.object({
+  period: z.string(),
+  totalRequests: z.number(),
+  totalTokens: z.number(),
+  dailyBreakdown: z.array(StatsDailyBreakdownSchema),
+});
+
+export type StatsResponse = z.infer<typeof StatsResponseSchema>;
+
+// Rate Limit Error Schema
+export const RateLimitErrorSchema = z.object({
+  statusCode: z.literal(429),
+  message: z.string(),
+  currentUsage: z.number(),
+  limit: z.number(),
+  resetDate: z.string(),
+});
+
+export type RateLimitError = z.infer<typeof RateLimitErrorSchema>;
+

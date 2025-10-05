@@ -189,16 +189,16 @@ export default function MarketAllocation() {
   return (
     <Card className="p-0">
       <CardHeader>
-        <div className="flex items-center justify-between mt-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-4">
           <CardTitle className="text-lg">Phân bổ</CardTitle>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <div className="flex items-center gap-0 border rounded-md w-fit border-border">
               {timeFrameOptions.map((opt) => (
                 <Button
                   key={opt.value}
                   variant={timeFrame === opt.value ? 'default' : 'ghost'}
                   size="sm"
-                  className="px-2"
+                  className="px-1.5 sm:px-2 text-xs"
                   onClick={() => setTimeFrame(opt.value)}
                 >
                   {opt.label}
@@ -206,7 +206,7 @@ export default function MarketAllocation() {
               ))}
             </div>
             <Select value={group} onValueChange={(g: Group) => setGroup(g)}>
-              <SelectTrigger size="sm">
+              <SelectTrigger size="sm" className="w-[90px]">
                 <SelectValue placeholder="Nhóm" />
               </SelectTrigger>
               <SelectContent>

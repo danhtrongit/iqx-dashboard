@@ -9,7 +9,7 @@ import { SignalMonitor } from "@/components/personalized/signal-monitor";
 export default function PersonalPage() {
 
   return (
-    <div className="container mx-auto px-4 py-6 space-y-6">
+    <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6 max-w-full overflow-x-hidden">
 
       {/* Portfolio Statistics */}
       <section>
@@ -18,7 +18,7 @@ export default function PersonalPage() {
 
       {/* Quick Trading & Portfolio Details */}
       <section>
-        <div className="grid gap-4 lg:grid-cols-3">
+        <div className="grid gap-4 grid-cols-1 lg:grid-cols-3">
           <div className="lg:col-span-1 h-full">
             <QuickTrading />
           </div>

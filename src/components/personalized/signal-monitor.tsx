@@ -3,11 +3,13 @@ import { Badge } from '@/components/ui/badge'
 import {
     AlertTriangle,
     Activity,
-    RefreshCcw
+    RefreshCcw,
+    Wifi,
+    WifiOff
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useVirtualPortfolio } from '@/hooks/use-virtual-trading'
-import { useSignals } from '@/hooks/use-signals'
+import { useSignalsWebSocket } from '@/hooks/use-signals-websocket'
 import { Button } from '@/components/ui/button'
 import { useMemo } from 'react'
 import type { SignalDataItem } from '@/lib/schemas/signals'
@@ -20,24 +22,38 @@ export function SignalMonitor() {
         return portfolio?.holdings?.map(holding => holding.symbolCode) || []
     }, [portfolio?.holdings])
 
-    // Fetch signals for all symbols in portfolio
-    const { data: signalsData, isLoading: isSignalsLoading, refetch } = useSignals(symbols, {
+    // Use WebSocket for real-time signals
+    const {
+        signals: signalsData,
+        isConnected,
+        isConnecting,
+        error: wsError,
+        reconnect
+    } = useSignalsWebSocket(symbols, {
         enabled: symbols.length > 0,
-        refetchInterval: 2 * 60 * 1000, // Auto-refresh every 2 minutes
+        interval: 60000, // Update every 60 seconds
+        onConnected: () => {
+            console.log('🚀 Real-time signals connected')
+        },
+        onError: (error) => {
+            console.error('⚠️ WebSocket error:', error)
+        },
+        autoReconnect: true,
+        reconnectDelay: 5000,
     })
 
-    const isLoading = isPortfolioLoading || isSignalsLoading
+    const isLoading = isPortfolioLoading || isConnecting
 
     // Filter signals - only show stocks with active signals
     const filteredSignals = useMemo(() => {
-        if (!signalsData?.data) return []
+        if (!signalsData || signalsData.length === 0) return []
 
-        return signalsData.data.filter(signal => {
+        return signalsData.filter(signal => {
             // Check if any signal is active
             const hasActiveSignal = Object.values(signal.analysis.signals).some(Boolean)
             return hasActiveSignal
         })
-    }, [signalsData?.data])
+    }, [signalsData])
 
     // Render signal card
     const renderSignalCard = (signal: SignalDataItem) => {
@@ -147,7 +163,7 @@ export function SignalMonitor() {
         return (
             <Card>
                 <CardHeader>
-                    <CardTitle>Tín hiệu giao dịch</CardTitle>
+                    <CardTitle>Tín hiệu và cảnh báo realtime</CardTitle>
                     <CardDescription>Phân tích kỹ thuật cho danh mục đầu tư</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -171,44 +187,84 @@ export function SignalMonitor() {
         return (
             <Card>
                 <CardHeader>
-                    <CardTitle>Tín hiệu giao dịch</CardTitle>
+                    <CardTitle>Tín hiệu và cảnh báo realtime</CardTitle>
                     <CardDescription>Phân tích kỹ thuật cho danh mục đầu tư</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="text-center py-8 text-muted-foreground">
                         <AlertTriangle className="h-12 w-12 mx-auto mb-4 opacity-50" />
                         <p>Không có cổ phiếu trong danh mục</p>
-                        <p className="text-sm mt-2">Hãy mua cổ phiếu để theo dõi tín hiệu giao dịch</p>
+                        <p className="text-sm mt-2">Hãy mua cổ phiếu để theo dõi </p>
                     </div>
                 </CardContent>
             </Card>
         )
     }
 
-    if (!signalsData || signalsData.data.length === 0) {
+    if (!signalsData || signalsData.length === 0) {
         return (
             <div>
                 <div className="flex items-center justify-between mb-4">
                     <div>
-                        <h2 className="text-xl font-semibold">Tín hiệu giao dịch</h2>
+                        <h2 className="text-xl font-semibold">Tín hiệu và cảnh báo realtime</h2>
                         <p className="text-sm text-muted-foreground">Phân tích kỹ thuật cho danh mục đầu tư</p>
                     </div>
+                <div className="flex items-center gap-2">
+                    {/* Connection Status */}
+                    <Badge 
+                        variant={isConnected ? "default" : wsError ? "destructive" : "secondary"} 
+                        className="gap-1"
+                    >
+                        {isConnected ? (
+                            <>
+                                <Wifi className="h-3 w-3" />
+                                <span>Đã kết nối</span>
+                            </>
+                        ) : wsError ? (
+                            <>
+                                <AlertTriangle className="h-3 w-3" />
+                                <span>Lỗi kết nối</span>
+                            </>
+                        ) : (
+                            <>
+                                <WifiOff className="h-3 w-3" />
+                                <span>Chưa kết nối</span>
+                            </>
+                        )}
+                    </Badge>
                     <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => refetch()}
+                        onClick={() => reconnect()}
+                        disabled={isConnecting}
                         className="h-9"
                     >
-                        <RefreshCcw className="h-4 w-4 mr-2" />
-                        Làm mới
+                        <RefreshCcw className={cn("h-4 w-4 mr-2", isConnecting && "animate-spin")} />
+                        {isConnecting ? 'Đang kết nối...' : 'Kết nối lại'}
                     </Button>
+                </div>
                 </div>
                 <Card>
                     <CardContent className="py-12">
                         <div className="text-center text-muted-foreground">
-                            <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                            <p>Không có dữ liệu tín hiệu</p>
-                            <p className="text-sm mt-2">Vui lòng thử lại sau</p>
+                            {wsError ? (
+                                <>
+                                    <AlertTriangle className="h-12 w-12 mx-auto mb-4 opacity-50 text-orange-500" />
+                                    <p className="font-medium text-foreground">Lỗi kết nối</p>
+                                    <p className="text-sm mt-2 max-w-md mx-auto">
+                                        {wsError}
+                                    </p>
+                                    <p className="text-xs mt-4 text-muted-foreground">
+                                        Nhấn "Kết nối lại" để thử lại hoặc kiểm tra xem máy chủ WebSocket có đang chạy không.
+                                    </p>
+                                </>
+                            ) : (
+                                <>
+                                    <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                                    <p>Không có dữ liệu tín hiệu</p>
+                                    <p className="text-sm mt-2">Đang chờ dữ liệu từ server...</p>
+                                </>
+                            )}
                         </div>
                     </CardContent>
                 </Card>
@@ -227,20 +283,54 @@ export function SignalMonitor() {
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
                 <div>
-                    <h2 className="text-xl font-semibold">Tín hiệu giao dịch</h2>
+                    <div className="flex items-center gap-2 mb-1">
+                        <h2 className="text-xl font-semibold">Tín hiệu và cảnh báo realtime</h2>
+                        {/* Real-time indicator */}
+                        {isConnected && (
+                            <Badge variant="default" className="gap-1 animate-pulse">
+                                <Wifi className="h-3 w-3" />
+                                <span>Live</span>
+                            </Badge>
+                        )}
+                    </div>
                     <p className="text-sm text-muted-foreground">
                         {filteredSignals.length} mã có tín hiệu • {totalSignals} tín hiệu hoạt động
                     </p>
                 </div>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => refetch()}
-                    className="h-9"
-                >
-                    <RefreshCcw className="h-4 w-4 mr-2" />
-                    Làm mới
-                </Button>
+                <div className="flex items-center gap-2">
+                    {/* Connection Status */}
+                    <Badge 
+                        variant={isConnected ? "default" : wsError ? "destructive" : "secondary"} 
+                        className="gap-1"
+                    >
+                        {isConnected ? (
+                            <>
+                                <Wifi className="h-3 w-3" />
+                                <span>Đã kết nối</span>
+                            </>
+                        ) : wsError ? (
+                            <>
+                                <AlertTriangle className="h-3 w-3" />
+                                <span>Lỗi kết nối</span>
+                            </>
+                        ) : (
+                            <>
+                                <WifiOff className="h-3 w-3" />
+                                <span>Chưa kết nối</span>
+                            </>
+                        )}
+                    </Badge>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => reconnect()}
+                        disabled={isConnecting}
+                        className="h-9"
+                    >
+                        <RefreshCcw className={cn("h-4 w-4 mr-2", isConnecting && "animate-spin")} />
+                        {isConnecting ? 'Đang kết nối...' : 'Kết nối lại'}
+                    </Button>
+                </div>
             </div>
 
             {/* Signal Cards Grid */}
@@ -256,7 +346,7 @@ export function SignalMonitor() {
                         <div className="text-center text-muted-foreground">
                             <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
                             <p className="font-medium">Không có mã nào có tín hiệu</p>
-                            <p className="text-sm mt-2">Tất cả các mã trong danh mục đều không có tín hiệu giao dịch</p>
+                            <p className="text-sm mt-2">Tất cả các mã trong danh mục đều không có Tín hiệu và cảnh báo realtime</p>
                         </div>
                     </CardContent>
                 </Card>

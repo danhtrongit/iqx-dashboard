@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import type { AriXProChatMessage } from "@/types/arix-pro";
+import type { AriXProChatMessage, UsageResponse, StatsResponse } from "@/types/arix-pro";
 import { ariXProService } from "@/services/arix-pro.service";
 
 const STORAGE_KEY = "arix_pro_chat_history";
@@ -7,6 +7,8 @@ const STORAGE_KEY = "arix_pro_chat_history";
 export function useAriXPro() {
   const [messages, setMessages] = useState<AriXProChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [usage, setUsage] = useState<UsageResponse | null>(null);
+  const [isLoadingUsage, setIsLoadingUsage] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Load chat history from localStorage on mount
@@ -116,12 +118,39 @@ export function useAriXPro() {
     }
   }, []);
 
+  const fetchUsage = useCallback(async () => {
+    setIsLoadingUsage(true);
+    try {
+      const usageData = await ariXProService.getUsage();
+      setUsage(usageData);
+      return usageData;
+    } catch (error) {
+      console.error("Error fetching usage:", error);
+      throw error;
+    } finally {
+      setIsLoadingUsage(false);
+    }
+  }, []);
+
+  const fetchStats = useCallback(async (days: number = 7): Promise<StatsResponse> => {
+    try {
+      return await ariXProService.getStats(days);
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+      throw error;
+    }
+  }, []);
+
   return {
     messages,
     isLoading,
     messagesEndRef,
     sendMessage,
     clearHistory,
+    usage,
+    isLoadingUsage,
+    fetchUsage,
+    fetchStats,
   };
 }
 

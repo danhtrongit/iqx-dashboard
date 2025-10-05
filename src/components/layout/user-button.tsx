@@ -14,7 +14,7 @@ import {
 } from "../ui/dropdown-menu";
 import { Badge } from "../ui/badge";
 import { Skeleton } from "../ui/skeleton";
-import { LayoutGrid, User, Shield, Settings, LogOut, Crown, CheckCircle, AlertCircle, TrendingUp, Gift } from "lucide-react";
+import { LayoutGrid, User, Shield, Settings, LogOut, Crown, CheckCircle, AlertCircle, TrendingUp, Gift, Users, Zap } from "lucide-react";
 
 export default function UserButton() {
     const { user, isAuthenticated, isLoading } = useAuth();
@@ -170,6 +170,12 @@ export default function UserButton() {
                         <DropdownMenuShortcut>⌘P</DropdownMenuShortcut>
                     </DropdownMenuItem>
 
+                    <DropdownMenuItem onClick={() => navigate("/api-extensions")}>
+                        <Zap className="size-4" />
+                        <span>Gói mở rộng API</span>
+                        <DropdownMenuShortcut>⌘E</DropdownMenuShortcut>
+                    </DropdownMenuItem>
+
                     <DropdownMenuItem onClick={() => navigate("/referral")}>
                         <Gift className="size-4" />
                         <span>Giới thiệu & Hoa hồng</span>
@@ -191,6 +197,11 @@ export default function UserButton() {
                     {user.role === "admin" && (
                         <>
                             <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => navigate("/admin/users")}>
+                                <Users className="size-4" />
+                                <span>Quản lý người dùng</span>
+                                <DropdownMenuShortcut>⌘U</DropdownMenuShortcut>
+                            </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => navigate("/admin/commission")}>
                                 <Shield className="size-4" />
                                 <span>Cài đặt hoa hồng</span>

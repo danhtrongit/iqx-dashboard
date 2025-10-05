@@ -37,7 +37,12 @@ export default function PaymentSuccessPage() {
       // Don't need to poll
       return;
     }
-  }, [status]);
+    
+    // Clear stored orderCode after checking payment
+    if (payment?.status === "completed") {
+      localStorage.removeItem('extensionPaymentOrderCode');
+    }
+  }, [status, payment]);
 
   if (isLoading) {
     return (
@@ -100,8 +105,10 @@ export default function PaymentSuccessPage() {
           {isSuccess ? (
             <>
               <p className="text-center text-muted-foreground">
-                Cảm ơn bạn đã nâng cấp lên gói Premium! Gói đăng ký của bạn đã
-                được kích hoạt thành công.
+                {payment?.paymentType === 'extension' 
+                  ? `Cảm ơn bạn đã mua gói mở rộng API! Bạn đã được thêm ${payment?.extension?.additionalCalls?.toLocaleString() || ''} API calls.`
+                  : 'Cảm ơn bạn đã nâng cấp lên gói Premium! Gói đăng ký của bạn đã được kích hoạt thành công.'
+                }
               </p>
               {payment && (
                 <div className="bg-muted p-4 rounded-md space-y-2 text-sm">
@@ -146,9 +153,9 @@ export default function PaymentSuccessPage() {
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={() => navigate("/settings")}
+                  onClick={() => navigate(payment?.paymentType === 'extension' ? "/api-extensions" : "/settings")}
                 >
-                  Xem gói đăng ký
+                  {payment?.paymentType === 'extension' ? 'Xem gói mở rộng' : 'Xem gói đăng ký'}
                 </Button>
               </div>
             </>

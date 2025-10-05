@@ -20,7 +20,7 @@ export const SubscriptionPackageSchema = z.object({
   isActive: z.boolean(),
   features: z.record(z.string(), z.any()).nullable(),
   maxVirtualPortfolios: z.number().nullable(),
-  dailyApiLimit: z.number().nullable(),
+  apiLimit: z.number().nullable(), // Changed from dailyApiLimit to apiLimit
   createdAt: z.string(),
   updatedAt: z.string(),
 });
@@ -41,6 +41,8 @@ export const UserSubscriptionSchema = z.object({
   paymentReference: z.string().nullable(),
   cancelledAt: z.string().nullable(),
   cancellationReason: z.string().nullable(),
+  apiCallsUsed: z.number().default(0),
+  apiCallsLimit: z.number().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });
@@ -61,6 +63,8 @@ export const UserSubscriptionWithPackageSchema = z.object({
   paymentReference: z.string().nullable(),
   cancelledAt: z.string().nullable(),
   cancellationReason: z.string().nullable(),
+  apiCallsUsed: z.number().default(0),
+  apiCallsLimit: z.number().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
   package: z.object({
@@ -73,7 +77,7 @@ export const UserSubscriptionWithPackageSchema = z.object({
     isActive: z.boolean(),
     features: z.record(z.string(), z.any()).nullable(),
     maxVirtualPortfolios: z.number().nullable(),
-    dailyApiLimit: z.number().nullable(),
+    apiLimit: z.number().nullable(), // Changed from dailyApiLimit to apiLimit
     createdAt: z.string(),
     updatedAt: z.string(),
   }),
@@ -98,7 +102,7 @@ export const CurrentPlanSchema = z.object({
   expiresAt: z.string().optional(),
   features: z.object({
     maxVirtualPortfolios: z.number(),
-    dailyApiLimit: z.number(),
+    apiLimit: z.number(), // Changed from dailyApiLimit to apiLimit
   }),
 });
 

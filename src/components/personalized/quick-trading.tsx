@@ -61,16 +61,16 @@ export function QuickTrading() {
   }
 
   return (
-    <Card className="relative overflow-hidden h-full">
+    <Card className="pt-0 relative overflow-hidden h-full">
       {/* Header */}
       <div className="p-3 border-b flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Zap className="h-4 w-4 text-primary" />
-          <h3 className="font-semibold text-sm">Đặt lệnh</h3>
+          <h3 className="text-lg font-semibold">Đặt lệnh</h3>
         </div>
         <div className="text-right">
-          <p className="text-[10px] text-muted-foreground">Số dư</p>
-          <p className="text-sm font-bold tabular-nums">
+          <p className="text-base text-muted-foreground">Số dư</p>
+          <p className="text-lg font-bold tabular-nums">
             {(portfolio?.cashBalance || 0).toLocaleString('vi-VN')}
           </p>
         </div>

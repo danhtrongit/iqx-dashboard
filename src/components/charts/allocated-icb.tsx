@@ -105,16 +105,16 @@ export default function AllocatedICBTable() {
   return (
     <Card className="p-0">
       <CardHeader>
-        <div className="flex items-center justify-between mt-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-4">
           <CardTitle className="text-lg">Ngành</CardTitle>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <div className="flex items-center gap-0 border rounded-md w-fit border-border">
               {timeFrameOptions.map((opt) => (
                 <Button
                   key={opt.value}
                   variant={timeFrame === opt.value ? 'default' : 'ghost'}
                   size="sm"
-                  className="px-2"
+                  className="px-1.5 sm:px-2 text-xs"
                   onClick={() => setTimeFrame(opt.value)}
                 >
                   {opt.label}
@@ -122,7 +122,7 @@ export default function AllocatedICBTable() {
               ))}
             </div>
             <Select value={group} onValueChange={(g: Group) => setGroup(g)}>
-              <SelectTrigger size="sm">
+              <SelectTrigger size="sm" className="w-[90px]">
                 <SelectValue placeholder="Nhóm" />
               </SelectTrigger>
               <SelectContent>
@@ -141,14 +141,14 @@ export default function AllocatedICBTable() {
           <div className="text-center text-red-500">{(error as Error).message}</div>
         )}
         {!isLoading && !error && (
-          <div className="md:h-[320px] overflow-y-auto">
-            <Table>
+          <div className="md:h-[320px] overflow-x-auto overflow-y-auto">
+            <Table className="min-w-[600px]">
               <TableHeader>
                 <TableRow className="sticky top-0 z-10 bg-background">
-                <TableHead className="w-[40%]">Ngành</TableHead>
-                <TableHead className="w-[15%] text-right">Biến động</TableHead>
-                <TableHead className="w-[15%] text-right">Giá trị (tỷ VND)</TableHead>
-                <TableHead className="w-[30%]">Dòng tiền</TableHead>
+                <TableHead className="w-[35%] min-w-[150px]">Ngành</TableHead>
+                <TableHead className="w-[15%] min-w-[80px] text-right">Biến động</TableHead>
+                <TableHead className="w-[20%] min-w-[100px] text-right">Giá trị (tỷ VND)</TableHead>
+                <TableHead className="w-[30%] min-w-[120px]">Dòng tiền</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useXGBoost } from "@/lib/xgboost/hooks";
-import { XGBPrediction, FeatureRow } from "@/lib/xgboost/types";
+import type { XGBPrediction, FeatureRow } from "@/lib/xgboost/types";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -294,63 +294,65 @@ export default function XGBoostDashboard({
     }
 
     return (
-        <TooltipProvider delayDuration={150}>
-            <div className="grid gap-4 md:grid-cols-3">
-                {/* Header */}
-                <div className="md:col-span-3">
-                    <ModelHeader selected={selected} />
-                </div>
+        <div className="conainer mx-auto p-4">
+            <TooltipProvider delayDuration={150}>
+                <div className="grid gap-4 md:grid-cols-3">
+                    {/* Header */}
+                    <div className="md:col-span-3">
+                        <ModelHeader selected={selected} />
+                    </div>
 
-                {/* Left: filter + list */}
-                <Card className="rounded-2xl">
-                    <CardHeader>
-                        <CardTitle className="text-base">Danh sách mã</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                        <div className="flex items-center gap-2">
-                            <Input
-                                placeholder={searchPlaceholder}
-                                value={q}
-                                onChange={(e) => setQ(e.target.value)}
-                            />
-                            <Button variant="secondary" onClick={() => setQ("")}>
-                                Clear
-                            </Button>
-                        </div>
-                        <ScrollArea className="h-[520px] pr-2">
-                            <div className="space-y-2">
-                                {filtered.map((p) => (
-                                    <TickerCard
-                                        key={`${p.ticker}-${p.dateISO}`}
-                                        p={p}
-                                        active={selected?.ticker === p.ticker}
-                                        onClick={() => setActive(p.ticker)}
-                                    />
-                                ))}
+                    {/* Left: filter + list */}
+                    <Card className="rounded-2xl">
+                        <CardHeader>
+                            <CardTitle className="text-base">Danh sách mã</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                            <div className="flex items-center gap-2">
+                                <Input
+                                    placeholder={searchPlaceholder}
+                                    value={q}
+                                    onChange={(e) => setQ(e.target.value)}
+                                />
+                                <Button variant="secondary" onClick={() => setQ("")}>
+                                    Clear
+                                </Button>
                             </div>
-                        </ScrollArea>
-                    </CardContent>
-                </Card>
+                            <ScrollArea className="h-[520px] pr-2">
+                                <div className="space-y-2">
+                                    {filtered.map((p) => (
+                                        <TickerCard
+                                            key={`${p.ticker}-${p.dateISO}`}
+                                            p={p}
+                                            active={selected?.ticker === p.ticker}
+                                            onClick={() => setActive(p.ticker)}
+                                        />
+                                    ))}
+                                </div>
+                            </ScrollArea>
+                        </CardContent>
+                    </Card>
 
-                {/* Right: ALL features, tách Tăng/Giảm */}
-                <Card className="rounded-2xl md:col-span-2">
-                    <CardHeader className="flex flex-row items-center justify-between">
-                        <CardTitle className="text-base">Tất cả features</CardTitle>
-                        <div className="text-xs text-muted-foreground">
-                            {data?.updatedAt ? (
-                                <span>Cập nhật: {new Date(data.updatedAt).toLocaleString()}</span>
-                            ) : null}
-                        </div>
-                    </CardHeader>
-                    <CardContent>
-                        {selected ? (
-                            <FeatureListAll items={selected.features} />
-                        ) : (
-                            <div className="text-sm text-muted-foreground">Không có dữ liệu.</div>
-                        )}
-                    </CardContent>
-                </Card>
-            </div>
-        </TooltipProvider>
+                    {/* Right: ALL features, tách Tăng/Giảm */}
+                    <Card className="rounded-2xl md:col-span-2">
+                        <CardHeader className="flex flex-row items-center justify-between">
+                            <CardTitle className="text-base">Tất cả features</CardTitle>
+                            <div className="text-xs text-muted-foreground">
+                                {data?.updatedAt ? (
+                                    <span>Cập nhật: {new Date(data.updatedAt).toLocaleString()}</span>
+                                ) : null}
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            {selected ? (
+                                <FeatureListAll items={selected.features} />
+                            ) : (
+                                <div className="text-sm text-muted-foreground">Không có dữ liệu.</div>
+                            )}
+                        </CardContent>
+                    </Card>
+                </div>
+            </TooltipProvider>
+        </div>
     );
 }

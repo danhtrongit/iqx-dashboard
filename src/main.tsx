@@ -29,9 +29,12 @@ import VirtualTradingPage from './pages/virtual-trading'
 import PremiumUpgradePage from './pages/premium'
 import PaymentSuccessPage from './pages/payment-success'
 import ReferralPage from './pages/referral'
+import PartnerPolicyPage from './pages/partner-policy'
 import AdminCommissionPage from './pages/admin-commission'
+import AdminUsersPage from './pages/admin-users'
 import WatchlistPage from './pages/watchlist-page'
 import AriXProPage from './pages/arix-pro'
+import ApiExtensionsPage from './pages/api-extensions'
 // Authentication pages
 import LoginPage from './pages/login'
 import RegisterPage from './pages/register'
@@ -43,6 +46,7 @@ import ForbiddenPage from './pages/403'
 // Protected route wrapper
 import { ProtectedRoute } from './components/auth/protected-route'
 import { TradingViewChart } from './pages/tradingview'
+import XGBoostDashboard from './components/xgboost'
 
 const router = createBrowserRouter([
   // Authentication routes (public)
@@ -112,8 +116,16 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "bo-loc-co-phieu",
+        path: "bo-loc",
         element: <ScreeningPage />,
+      },
+      {
+        path: "du-bao",
+        element: (
+          <ProtectedRoute>  
+            <XGBoostDashboard />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "co-phieu/:symbol",
@@ -152,6 +164,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "api-extensions",
+        element: (
+          <ProtectedRoute>
+            <ApiExtensionsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "payment/success",
         element: (
           <ProtectedRoute>
@@ -168,10 +188,22 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "partner-policy",
+        element: <PartnerPolicyPage />,
+      },
+      {
         path: "admin/commission",
         element: (
           <ProtectedRoute requiredRole="admin">
             <AdminCommissionPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "admin/users",
+        element: (
+          <ProtectedRoute requiredRole="admin">
+            <AdminUsersPage />
           </ProtectedRoute>
         ),
       },
