@@ -47,6 +47,7 @@ import ForbiddenPage from './pages/403'
 import { ProtectedRoute } from './components/auth/protected-route'
 import { TradingViewChart } from './pages/tradingview'
 import XGBoostDashboard from './components/xgboost'
+import FibonacciPage from './pages/fibonacci'
 
 const router = createBrowserRouter([
   // Authentication routes (public)
@@ -82,6 +83,10 @@ const router = createBrowserRouter([
       {
         path: "bieu-do-ky-thuat",
         element: <TradingViewChart />,
+      },
+      {
+        path: "cong-cu/fibonacci",
+        element: <FibonacciPage />,
       },
       {
         path: "theo-doi",

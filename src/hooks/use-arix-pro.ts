@@ -25,7 +25,6 @@ export function useAriXPro() {
         setMessages(messagesWithDates);
       }
     } catch (error) {
-      console.error("Error loading chat history:", error);
     }
   }, []);
 
@@ -35,7 +34,6 @@ export function useAriXPro() {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
       } catch (error) {
-        console.error("Error saving chat history:", error);
       }
     }
   }, [messages]);
@@ -114,7 +112,6 @@ export function useAriXPro() {
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch (error) {
-      console.error("Error clearing chat history:", error);
     }
   }, []);
 
@@ -125,7 +122,6 @@ export function useAriXPro() {
       setUsage(usageData);
       return usageData;
     } catch (error) {
-      console.error("Error fetching usage:", error);
       throw error;
     } finally {
       setIsLoadingUsage(false);
@@ -136,7 +132,6 @@ export function useAriXPro() {
     try {
       return await ariXProService.getStats(days);
     } catch (error) {
-      console.error("Error fetching stats:", error);
       throw error;
     }
   }, []);

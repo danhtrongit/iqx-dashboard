@@ -334,7 +334,6 @@ export function useReadingProgress(articleId: string, slug: string) {
           })
         )
       } catch (error) {
-        console.warn('Failed to save reading progress:', error)
       }
     }
 
@@ -350,7 +349,6 @@ export function useReadingProgress(articleId: string, slug: string) {
         })
       }
     } catch (error) {
-      console.warn('Failed to load reading progress:', error)
     }
 
     // Add scroll event listener

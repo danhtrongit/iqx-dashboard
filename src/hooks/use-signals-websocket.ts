@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import type { SignalDataItem } from '@/lib/schemas/signals'
+import SignalsService from '@/services/signals.service'
 
 // WebSocket message types
 interface ConnectedMessage {
@@ -37,6 +38,7 @@ interface UseSignalsWebSocketOptions {
   onSignalsUpdate?: (signals: SignalDataItem[]) => void
   autoReconnect?: boolean
   reconnectDelay?: number
+  useFallbackPolling?: boolean // Enable HTTP polling as fallback
 }
 
 interface UseSignalsWebSocketReturn {
@@ -47,9 +49,27 @@ interface UseSignalsWebSocketReturn {
   subscribe: (symbols: string[]) => void
   unsubscribe: (symbols?: string[]) => void
   reconnect: () => void
+  usingFallback: boolean
 }
 
-const WS_URL = import.meta.env.VITE_SIGNALS_WS_URL || 'ws://localhost:3456/ws'
+// WebSocket configuration
+const WEBSOCKET_ENABLED = true // Server is now running on port 3456
+
+// Determine WebSocket URL based on environment
+const getWebSocketURL = () => {
+  // If environment variable is set, use it
+  if (import.meta.env.VITE_SIGNALS_WS_URL) {
+    return import.meta.env.VITE_SIGNALS_WS_URL
+  }
+  
+  // In development, connect directly to the warning server
+  if (import.meta.env.DEV) {
+    return 'ws://localhost:3456/ws'
+  }
+  
+  // In production, use the direct WebSocket URL
+  return 'wss://https://warning.iqx.vn/ws'
+}
 
 export function useSignalsWebSocket(
   symbols: string[],
@@ -63,15 +83,18 @@ export function useSignalsWebSocket(
     onSignalsUpdate,
     autoReconnect = true,
     reconnectDelay = 5000, // 5 seconds
+    useFallbackPolling = true, // Enable fallback by default
   } = options
 
   const [signals, setSignals] = useState<SignalDataItem[]>([])
   const [isConnected, setIsConnected] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [usingFallback, setUsingFallback] = useState(false)
 
   const wsRef = useRef<WebSocket | null>(null)
   const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined)
   const subscribedSymbolsRef = useRef<string[]>([])
   const reconnectAttemptsRef = useRef<number>(0)
   const maxReconnectAttempts = 3
@@ -82,24 +105,82 @@ export function useSignalsWebSocket(
     symbolsRef.current = symbols
   }, [symbols])
 
-  // Connect to WebSocket
-  const connect = useCallback(() => {
-    if (!enabled || isConnecting || isConnected) return
+  // Fallback HTTP polling
+  const startPolling = useCallback(() => {
+    if (!useFallbackPolling || !enabled || symbolsRef.current.length === 0) return
+    
+    // Don't start if already polling
+    if (pollingIntervalRef.current) {
+      return
+    }
+    
+    setUsingFallback(true)
+    
+    // Initial fetch
+    const fetchSignals = async () => {
+      try {
+        // Use real API from warning server
+        const response = await SignalsService.getSignals({ 
+          symbols: symbolsRef.current 
+        })
+        if (response && response.data) {
+          setSignals(response.data)
+          onSignalsUpdate?.(response.data)
+          setError(null)
+        }
+      } catch (err) {
+        setError('Không thể tải dữ liệu tín hiệu qua HTTP')
+      }
+    }
+    
+    fetchSignals() // Initial fetch
+    
+    // Set up polling interval
+    pollingIntervalRef.current = setInterval(fetchSignals, interval)
+  }, [enabled, interval, onSignalsUpdate, useFallbackPolling])
+
+  const stopPolling = useCallback(() => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current)
+      pollingIntervalRef.current = undefined
+      setUsingFallback(false)
+    }
+  }, [])
+
+  // Connect to WebSocket  
+  const connectWebSocket = useCallback(() => {
+    // Check if WebSocket is disabled
+    if (!WEBSOCKET_ENABLED) {
+      if (!usingFallback && !pollingIntervalRef.current) {
+        startPolling()
+      }
+      return
+    }
+    
+    // Check current state using refs to avoid stale closure issues
+    if (!enabled) return
+    if (wsRef.current?.readyState === WebSocket.CONNECTING) return
+    if (wsRef.current?.readyState === WebSocket.OPEN) return
 
     setIsConnecting(true)
     setError(null)
 
     try {
-      console.log('🔌 Attempting to connect to:', WS_URL)
-      const ws = new WebSocket(WS_URL)
+      const wsUrl = getWebSocketURL()
+      
+      const ws = new WebSocket(wsUrl)
       wsRef.current = ws
 
       ws.onopen = () => {
-        console.log('✅ Connected to IQX Signal WebSocket')
         setIsConnected(true)
         setIsConnecting(false)
         setError(null)
         reconnectAttemptsRef.current = 0 // Reset reconnect attempts on successful connection
+        
+        // Stop fallback polling if it was running
+        if (usingFallback) {
+          stopPolling()
+        }
       }
 
       ws.onmessage = (event) => {
@@ -108,12 +189,10 @@ export function useSignalsWebSocket(
 
           switch (message.type) {
             case 'connected':
-              console.log('🔌 WebSocket connected:', message.message)
               onConnected?.()
               // Auto-subscribe to symbols after connection
               const currentSymbols = symbolsRef.current
               if (currentSymbols.length > 0) {
-                console.log('📤 Auto-subscribing to:', currentSymbols.join(', '))
                 ws.send(JSON.stringify({
                   action: 'subscribe',
                   symbols: currentSymbols,
@@ -123,40 +202,45 @@ export function useSignalsWebSocket(
               break
 
             case 'subscribed':
-              console.log('📡 Subscribed to symbols:', message.symbols.join(', '))
               subscribedSymbolsRef.current = message.symbols
               break
 
             case 'signals':
-              console.log(`📊 Received ${message.count} signals`)
               setSignals(message.data)
               onSignalsUpdate?.(message.data)
               break
 
             case 'error':
-              console.error('❌ WebSocket error:', message.message)
               setError(message.message)
               onError?.(message.message)
               break
           }
         } catch (err) {
-          console.error('Failed to parse WebSocket message:', err)
         }
       }
 
       ws.onerror = (event) => {
-        console.error('❌ WebSocket connection error:', event)
-        const errorMessage = 'Không thể kết nối tới máy chủ tín hiệu. Vui lòng kiểm tra kết nối mạng hoặc liên hệ hỗ trợ.'
+        
+        let errorMessage = 'Không thể kết nối tới máy chủ tín hiệu.'
+        
+        // Provide more specific error messages based on environment
+        if (import.meta.env.DEV) {
+          errorMessage += ' Đang chạy ở chế độ development. Kiểm tra xem backend WebSocket server có đang chạy tại ' + wsUrl
+        } else {
+          errorMessage += ' Vui lòng kiểm tra kết nối mạng hoặc liên hệ hỗ trợ.'
+        }
+        
+        // Check for common issues
+        if (wsUrl.startsWith('ws://') && window.location.protocol === 'https:') {
+          errorMessage = 'Lỗi bảo mật: Không thể kết nối WebSocket không bảo mật (ws://) từ trang HTTPS. Vui lòng sử dụng wss://'
+        }
+        
         setError(errorMessage)
         setIsConnecting(false)
         onError?.(errorMessage)
       }
 
       ws.onclose = (event) => {
-        console.log('❌ WebSocket disconnected')
-        console.log('   Code:', event.code)
-        console.log('   Reason:', event.reason || 'No reason provided')
-        console.log('   Clean:', event.wasClean)
         
         setIsConnected(false)
         setIsConnecting(false)
@@ -165,38 +249,39 @@ export function useSignalsWebSocket(
         // Auto-reconnect with max attempts limit
         if (autoReconnect && enabled && reconnectAttemptsRef.current < maxReconnectAttempts) {
           reconnectAttemptsRef.current += 1
-          console.log(`🔄 Reconnecting in ${reconnectDelay / 1000}s... (Attempt ${reconnectAttemptsRef.current}/${maxReconnectAttempts})`)
           reconnectTimeoutRef.current = setTimeout(() => {
-            connect()
+            connectWebSocket()
           }, reconnectDelay)
         } else if (reconnectAttemptsRef.current >= maxReconnectAttempts) {
-          const errorMsg = 'Không thể kết nối sau nhiều lần thử. Vui lòng thử lại sau.'
-          setError(errorMsg)
-          onError?.(errorMsg)
-          console.error('❌ Max reconnection attempts reached')
+          const errorMsg = 'Không thể kết nối WebSocket. Chuyển sang chế độ HTTP polling.'
+          
+          // Start fallback HTTP polling if enabled
+          if (useFallbackPolling && !usingFallback) {
+            startPolling()
+            setError(null) // Clear error if fallback is working
+          } else {
+            setError(errorMsg)
+            onError?.(errorMsg)
+          }
         }
       }
     } catch (err) {
-      console.error('Failed to create WebSocket connection:', err)
       setError('Failed to connect to WebSocket')
       setIsConnecting(false)
     }
-  }, [enabled, isConnecting, isConnected, interval, onConnected, onError, onSignalsUpdate, autoReconnect, reconnectDelay])
+  }, [enabled, interval, autoReconnect, reconnectDelay, useFallbackPolling, startPolling, usingFallback])
 
   // Subscribe to symbols
   const subscribe = useCallback((newSymbols: string[]) => {
     if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
-      console.warn('WebSocket not connected, cannot subscribe')
       return
     }
 
     if (newSymbols.length === 0) {
-      console.warn('No symbols to subscribe')
       return
     }
 
     if (newSymbols.length > 20) {
-      console.warn('Maximum 20 symbols per subscription, truncating...')
       newSymbols = newSymbols.slice(0, 20)
     }
 
@@ -210,7 +295,6 @@ export function useSignalsWebSocket(
   // Unsubscribe from symbols
   const unsubscribe = useCallback((symbolsToUnsubscribe?: string[]) => {
     if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
-      console.warn('WebSocket not connected, cannot unsubscribe')
       return
     }
 
@@ -237,27 +321,32 @@ export function useSignalsWebSocket(
       clearTimeout(reconnectTimeoutRef.current)
     }
     
-    connect()
-  }, [connect])
+    // Stop polling if running
+    stopPolling()
+    
+    connectWebSocket()
+  }, [connectWebSocket, stopPolling])
 
   // Effect: Connect on mount, disconnect on unmount
   useEffect(() => {
-    console.log('🔍 WebSocket Effect - enabled:', enabled)
+    if (!enabled) return
     
-    if (enabled) {
-      connect()
-    }
+    connectWebSocket()
 
     return () => {
-      console.log('🧹 WebSocket cleanup')
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current)
       }
       if (wsRef.current) {
         wsRef.current.close()
       }
+      // Clean up polling if running
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current)
+        pollingIntervalRef.current = undefined
+      }
     }
-  }, [enabled, connect])
+  }, [enabled, connectWebSocket]) // Only re-run when enabled changes or connect function changes
 
   // Effect: Update subscription when symbols change
   useEffect(() => {
@@ -292,6 +381,7 @@ export function useSignalsWebSocket(
     subscribe,
     unsubscribe,
     reconnect,
+    usingFallback,
   }
 }
 

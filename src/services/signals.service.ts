@@ -5,7 +5,8 @@ import {
   GetSignalsResponseSchema,
 } from "@/lib/schemas/signals";
 
-const API_BASE_URL = import.meta.env.VITE_BASE_API2 || "http://localhost:3000/api";
+// Use local warning server for signals API
+const API_BASE_URL = import.meta.env.VITE_SIGNALS_API_URL || "http://localhost:3456/api";
 
 // Create axios instance for signals API
 const signalsHttp = axios.create({

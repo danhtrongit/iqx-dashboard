@@ -68,14 +68,11 @@ export class SubscriptionService {
     
     try {
       const parsed = response.data.map((pkg) => {
-        console.log("Parsing package:", pkg);
         const result = SubscriptionPackageSchema.parse(pkg);
-        console.log("Parsed result:", result);
         return result;
       });
       return parsed;
     } catch (error) {
-      console.error("Error parsing packages:", error);
       throw error;
     }
   }

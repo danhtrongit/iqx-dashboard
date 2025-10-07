@@ -98,7 +98,6 @@ export default function ValuationSimulator(props: ValuationSimulatorProps) {
         });
         
       } catch (error) {
-        console.error('Error fetching data:', error);
         // No fallback data - show actual error state
         setBenchmarkStocks([]);
         setSelectedStocks([]);

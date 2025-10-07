@@ -44,10 +44,8 @@ export default function Watchlist() {
     onSuccess: (_, removedItem) => {
       queryClient.invalidateQueries({ queryKey: ['watchlist'] })
       queryClient.invalidateQueries({ queryKey: ['favorites'] })
-      console.log('Đã xóa', removedItem.symbol.symbol, 'khỏi danh sách theo dõi')
     },
     onError: (error: any, failedItem) => {
-      console.error('Failed to remove from watchlist:', error)
       setError(`Không thể xóa ${failedItem.symbol.symbol} khỏi danh sách theo dõi`)
     }
   })
@@ -62,7 +60,6 @@ export default function Watchlist() {
       await toggleFavorite(symbol)
       setError(null)
     } catch (error) {
-      console.error('Failed to toggle favorite:', error)
       setError('Không thể cập nhật danh sách yêu thích')
     }
   }

@@ -87,7 +87,6 @@ class AriXProService {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error("AriX Pro chat error:", error);
       throw error;
     }
   }
@@ -109,7 +108,6 @@ class AriXProService {
       const data: UsageResponse = await response.json();
       return data;
     } catch (error) {
-      console.error("AriX Pro get usage error:", error);
       throw error;
     }
   }
@@ -132,7 +130,6 @@ class AriXProService {
       const data: StatsResponse = await response.json();
       return data;
     } catch (error) {
-      console.error("AriX Pro get stats error:", error);
       throw error;
     }
   }
@@ -152,7 +149,6 @@ class AriXProService {
 
       return await response.text();
     } catch (error) {
-      console.error("AriX Pro health check error:", error);
       throw error;
     }
   }

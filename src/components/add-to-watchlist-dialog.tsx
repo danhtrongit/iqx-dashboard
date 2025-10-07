@@ -41,7 +41,6 @@ export function AddToWatchlistDialog({ children }: AddToWatchlistDialogProps) {
       setErrors({})
     },
     onError: (error: any) => {
-      console.error('Failed to add to watchlist:', error)
       setErrors({
         general: error.message || 'Không thể thêm cổ phiếu vào danh sách theo dõi'
       })

@@ -77,19 +77,16 @@ export function TradingViewChart({
         await new Promise(resolve => setTimeout(resolve, 200));
 
         if (!chartContainerRef.current) {
-          console.error('Chart container not ready');
           return;
         }
 
         // Verify the element exists in DOM before initializing
         const containerElement = document.getElementById(containerId);
         if (!containerElement) {
-          console.error(`Container element with id '${containerId}' not found in DOM`);
           // Retry after a delay
           await new Promise(resolve => setTimeout(resolve, 500));
           const retryElement = document.getElementById(containerId);
           if (!retryElement) {
-            console.error(`Container element still not found after retry`);
             setIsLoading(false);
             return;
           }
@@ -131,7 +128,6 @@ export function TradingViewChart({
 
         tvWidgetRef.current = tvWidget;
       } catch (error) {
-        console.error('Failed to initialize TradingView widget:', error);
         setIsLoading(false);
       }
     };
@@ -143,7 +139,6 @@ export function TradingViewChart({
         try {
           tvWidgetRef.current.remove();
         } catch (e) {
-          console.error('Error removing widget:', e);
         }
         tvWidgetRef.current = null;
       }

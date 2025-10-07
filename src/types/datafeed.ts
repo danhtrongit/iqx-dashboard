@@ -43,7 +43,6 @@ export class Datafeed {
   private subscribers: Record<string, SubscribeBarsCallback> = {};
 
   onReady(callback: OnReadyCallback): void {
-    console.log('[Datafeed]: onReady');
     setTimeout(() => {
       callback({
         exchanges: [
@@ -83,7 +82,6 @@ export class Datafeed {
         onResult(results);
       })
       .catch(error => {
-        console.error('[Datafeed]: searchSymbols error', error);
         onResult([]);
       });
   }

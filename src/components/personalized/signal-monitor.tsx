@@ -28,15 +28,14 @@ export function SignalMonitor() {
         isConnected,
         isConnecting,
         error: wsError,
-        reconnect
+        reconnect,
+        usingFallback
     } = useSignalsWebSocket(symbols, {
         enabled: symbols.length > 0,
         interval: 60000, // Update every 60 seconds
         onConnected: () => {
-            console.log('🚀 Real-time signals connected')
         },
         onError: (error) => {
-            console.error('⚠️ WebSocket error:', error)
         },
         autoReconnect: true,
         reconnectDelay: 5000,
@@ -212,13 +211,18 @@ export function SignalMonitor() {
                 <div className="flex items-center gap-2">
                     {/* Connection Status */}
                     <Badge 
-                        variant={isConnected ? "default" : wsError ? "destructive" : "secondary"} 
+                        variant={isConnected || usingFallback ? "default" : wsError ? "destructive" : "secondary"} 
                         className="gap-1"
                     >
                         {isConnected ? (
                             <>
                                 <Wifi className="h-3 w-3" />
-                                <span>Đã kết nối</span>
+                                <span>WebSocket</span>
+                            </>
+                        ) : usingFallback ? (
+                            <>
+                                <RefreshCcw className="h-3 w-3" />
+                                <span>HTTP Polling</span>
                             </>
                         ) : wsError ? (
                             <>
@@ -286,10 +290,19 @@ export function SignalMonitor() {
                     <div className="flex items-center gap-2 mb-1">
                         <h2 className="text-xl font-semibold">Tín hiệu và cảnh báo realtime</h2>
                         {/* Real-time indicator */}
-                        {isConnected && (
+                        {(isConnected || usingFallback) && (
                             <Badge variant="default" className="gap-1 animate-pulse">
-                                <Wifi className="h-3 w-3" />
-                                <span>Live</span>
+                                {isConnected ? (
+                                    <>
+                                        <Wifi className="h-3 w-3" />
+                                        <span>Live</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <RefreshCcw className="h-3 w-3" />
+                                        <span>Polling</span>
+                                    </>
+                                )}
                             </Badge>
                         )}
                     </div>
@@ -300,13 +313,18 @@ export function SignalMonitor() {
                 <div className="flex items-center gap-2">
                     {/* Connection Status */}
                     <Badge 
-                        variant={isConnected ? "default" : wsError ? "destructive" : "secondary"} 
+                        variant={isConnected || usingFallback ? "default" : wsError ? "destructive" : "secondary"} 
                         className="gap-1"
                     >
                         {isConnected ? (
                             <>
                                 <Wifi className="h-3 w-3" />
-                                <span>Đã kết nối</span>
+                                <span>WebSocket</span>
+                            </>
+                        ) : usingFallback ? (
+                            <>
+                                <RefreshCcw className="h-3 w-3" />
+                                <span>HTTP Polling</span>
                             </>
                         ) : wsError ? (
                             <>

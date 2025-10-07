@@ -21,7 +21,6 @@ export class AnalysisReportService {
 
       return analysisReport.AnalysisReportResponseSchema.parse(response.data);
     } catch (error) {
-      console.error("Error fetching analysis reports:", error);
       throw new Error(
         error instanceof Error ? error.message : "Failed to fetch analysis reports"
       );

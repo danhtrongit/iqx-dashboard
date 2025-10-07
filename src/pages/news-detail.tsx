@@ -42,7 +42,6 @@ export default function NewsDetailPage() {
           url: window.location.href,
         })
       } catch (error) {
-        console.log('Sharing failed:', error)
         fallbackShare()
       }
     } else {

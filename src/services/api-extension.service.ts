@@ -54,7 +54,6 @@ class ApiExtensionService {
 
       return await response.json();
     } catch (error) {
-      console.error("Error fetching API extension packages:", error);
       throw error;
     }
   }
@@ -78,7 +77,6 @@ class ApiExtensionService {
 
       return await response.json();
     } catch (error) {
-      console.error("Error fetching API extension package:", error);
       throw error;
     }
   }
@@ -126,7 +124,6 @@ class ApiExtensionService {
         throw new Error(`Invalid cancel URL: ${finalCancelUrl}. Must be an absolute URL with http:// or https://`);
       }
 
-      console.log('Payment URLs:', { returnUrl: finalReturnUrl, cancelUrl: finalCancelUrl });
 
       const response = await fetch(`${this.baseUrl}/api-extensions/payment/create`, {
         method: "POST",
@@ -144,7 +141,6 @@ class ApiExtensionService {
 
       return await response.json();
     } catch (error) {
-      console.error("Error creating extension payment:", error);
       throw error;
     }
   }
@@ -168,7 +164,6 @@ class ApiExtensionService {
 
       return await response.json();
     } catch (error) {
-      console.error("Error checking payment status:", error);
       throw error;
     }
   }
@@ -189,7 +184,6 @@ class ApiExtensionService {
 
       return await response.json();
     } catch (error) {
-      console.error("Error fetching my extensions:", error);
       throw error;
     }
   }
@@ -210,7 +204,6 @@ class ApiExtensionService {
 
       return await response.json();
     } catch (error) {
-      console.error("Error fetching purchase history:", error);
       throw error;
     }
   }

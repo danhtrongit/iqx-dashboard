@@ -28,7 +28,6 @@ export function useChatbot(options: ChatbotOptions = {}) {
         setSuggestions(response.suggestions.slice(0, 4))
       }
     } catch (error) {
-      console.warn('Could not load suggestions:', error)
     }
   }, [])
 

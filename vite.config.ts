@@ -11,4 +11,5 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  // Remove proxy - we'll connect directly to the warning server
 })

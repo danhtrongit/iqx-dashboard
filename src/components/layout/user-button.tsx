@@ -51,7 +51,6 @@ export default function UserButton() {
         try {
             await logoutMutation.mutateAsync();
         } catch (error) {
-            console.error("Logout error:", error);
             // Logout will be handled by the mutation's onSuccess/onError
         }
     };

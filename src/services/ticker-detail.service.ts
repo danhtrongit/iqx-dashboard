@@ -35,14 +35,12 @@ export async function getTickerDetail(params: {
   try {
     tickerData = tickerDetail.TickerDataSchema.parse(JSON.parse(rawResponse.tickerData));
   } catch (error) {
-    console.error("Failed to parse tickerData:", error);
     throw new Error("Invalid tickerData format");
   }
 
   try {
     tendays = z.array(tickerDetail.TenDaysItemSchema).parse(JSON.parse(rawResponse.tendays));
   } catch (error) {
-    console.error("Failed to parse tendays:", error);
     throw new Error("Invalid tendays format");
   }
 

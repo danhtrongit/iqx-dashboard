@@ -38,7 +38,6 @@ export function useLogin() {
       navigate("/");
     },
     onError: (error: AuthError) => {
-      console.error("Login error:", error);
     },
   });
 }
@@ -56,7 +55,6 @@ export function useRegister() {
       navigate("/login?message=registration-success");
     },
     onError: (error: AuthError) => {
-      console.error("Register error:", error);
     },
   });
 }
@@ -77,7 +75,6 @@ export function useLogout() {
       navigate("/login");
     },
     onError: (error: AuthError) => {
-      console.error("Logout error:", error);
       // Even if logout fails on server, clear local state
       queryClient.clear();
       navigate("/login");
@@ -118,7 +115,6 @@ export function useUpdateProfile() {
       queryClient.invalidateQueries({ queryKey: authKeys.profile() });
     },
     onError: (error: AuthError) => {
-      console.error("Update profile error:", error);
     },
   });
 }
@@ -129,7 +125,6 @@ export function useChangePassword() {
     mutationFn: (data: ChangePasswordRequest) =>
       AuthService.changePassword(data),
     onError: (error: AuthError) => {
-      console.error("Change password error:", error);
     },
   });
 }
@@ -140,7 +135,6 @@ export function useForgotPassword() {
     mutationFn: (data: ForgotPasswordRequest) =>
       AuthService.forgotPassword(data),
     onError: (error: AuthError) => {
-      console.error("Forgot password error:", error);
     },
   });
 }
@@ -156,7 +150,6 @@ export function useResetPassword() {
       navigate("/login?message=password-reset-success");
     },
     onError: (error: AuthError) => {
-      console.error("Reset password error:", error);
     },
   });
 }
@@ -167,7 +160,6 @@ export function usePhoneVerification() {
     mutationFn: (data: PhoneVerificationRequest) =>
       AuthService.sendPhoneVerification(data),
     onError: (error: AuthError) => {
-      console.error("Phone verification error:", error);
     },
   });
 }
@@ -184,7 +176,6 @@ export function usePhoneConfirmation() {
       queryClient.invalidateQueries({ queryKey: authKeys.profile() });
     },
     onError: (error: AuthError) => {
-      console.error("Phone confirmation error:", error);
     },
   });
 }
@@ -200,7 +191,6 @@ export function useEmailVerification() {
       queryClient.invalidateQueries({ queryKey: authKeys.profile() });
     },
     onError: (error: AuthError) => {
-      console.error("Email verification error:", error);
     },
   });
 }
@@ -210,7 +200,6 @@ export function useResendEmailVerification() {
   return useMutation({
     mutationFn: (email: string) => AuthService.resendEmailVerification(email),
     onError: (error: AuthError) => {
-      console.error("Resend email verification error:", error);
     },
   });
 }
@@ -245,7 +234,6 @@ export function useAuthErrorHandler() {
       navigate("/403");
     } else {
       // Other errors - log and continue
-      console.error("Auth error:", error);
     }
   };
 
@@ -285,7 +273,6 @@ export function useTokenRefresh() {
   return useMutation({
     mutationFn: () => refreshToken(),
     onError: (error: AuthError) => {
-      console.error("Token refresh error:", error);
     },
   });
 }

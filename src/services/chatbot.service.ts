@@ -32,7 +32,6 @@ class ChatbotService {
 
       return await response.json()
     } catch (error) {
-      console.error('Error sending message:', error)
       throw error
     }
   }
@@ -45,7 +44,6 @@ class ChatbotService {
       }
       return await response.json()
     } catch (error) {
-      console.error('Error getting stock info:', error)
       throw error
     }
   }
@@ -58,7 +56,6 @@ class ChatbotService {
       }
       return await response.json()
     } catch (error) {
-      console.error('Error getting suggestions:', error)
       return { success: false, suggestions: [] }
     }
   }

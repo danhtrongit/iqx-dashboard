@@ -47,7 +47,6 @@ export function useFavorites(options: UseFavoritesOptions = {}) {
       queryClient.invalidateQueries({ queryKey: ['favorite-check', newFavorite.symbol.symbol] })
     },
     onError: (error) => {
-      console.error('Failed to add favorite:', error)
     }
   })
 
@@ -63,7 +62,6 @@ export function useFavorites(options: UseFavoritesOptions = {}) {
       queryClient.invalidateQueries({ queryKey: ['favorite-check', symbol] })
     },
     onError: (error) => {
-      console.error('Failed to remove favorite:', error)
     }
   })
 

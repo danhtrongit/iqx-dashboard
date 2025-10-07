@@ -117,7 +117,6 @@ export async function searchStocks(params: StockSearchParams = {}): Promise<Stoc
     const data = await response.json()
     return normalizeSearchResults(data)
   } catch (error) {
-    console.error('Stock search error:', error)
     // Return mock data if API fails
     return getMockSearchResults(params.query || '')
   }
@@ -146,7 +145,6 @@ export async function quickSearchStocks(query: string, limit: number = 10): Prom
 
     return await response.json()
   } catch (error) {
-    console.error('Quick search error:', error)
     // Return mock data for quick search
     return getMockQuickSearchResults(query)
   }
@@ -168,7 +166,6 @@ export async function getStockByExactSymbol(symbol: string): Promise<StockDetail
 
     return await response.json()
   } catch (error) {
-    console.error('Get exact stock error:', error)
     return null
   }
 }
@@ -195,7 +192,6 @@ export async function getStocksByPrefix(prefix: string, board?: string, limit: n
     const data = await response.json()
     return normalizeSearchResults(data)
   } catch (error) {
-    console.error('Get stocks by prefix error:', error)
     return []
   }
 }
@@ -215,7 +211,6 @@ export async function getStockBySymbol(symbol: string): Promise<StockDetail | nu
 
     return await response.json()
   } catch (error) {
-    console.error('Get stock error:', error)
     return null
   }
 }
@@ -235,7 +230,6 @@ export async function getBoards(): Promise<Board[]> {
 
     return await response.json()
   } catch (error) {
-    console.error('Get boards error:', error)
     return [
       { code: 'HSX', name: 'HOSE' },
       { code: 'HNX', name: 'HNX' },
@@ -259,7 +253,6 @@ export async function getStockTypes(): Promise<StockType[]> {
 
     return await response.json()
   } catch (error) {
-    console.error('Get types error:', error)
     return []
   }
 }
@@ -280,7 +273,6 @@ export async function getStocksByBoard(board: string): Promise<StockSearchResult
     const data = await response.json()
     return normalizeSearchResults(data)
   } catch (error) {
-    console.error('Get stocks by board error:', error)
     return []
   }
 }

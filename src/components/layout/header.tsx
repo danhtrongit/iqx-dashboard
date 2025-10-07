@@ -5,10 +5,16 @@ import UserButton from "@/components/layout/user-button";
 import { Search } from "./search-button";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { MenuIcon, Crown, User, Sparkles, Zap } from "lucide-react";
+import { MenuIcon, Crown, User, Sparkles, Zap, ChevronDown, Calculator } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Header() {
     const [isOpen, setIsOpen] = useState(false)
@@ -107,6 +113,18 @@ export default function Header() {
                                         </Link>
                                     ))}
 
+                                    {/* Tools Section */}
+                                    <div className="my-2 border-t" />
+                                    <div className="px-2 py-1 text-xs font-semibold text-muted-foreground uppercase">
+                                        Công cụ
+                                    </div>
+                                    <Link to="/cong-cu/fibonacci" onClick={() => setIsOpen(false)}>
+                                        <Button variant="ghost" className="w-full justify-start text-left h-12">
+                                            <Calculator className="size-5 mr-2" />
+                                            Bộ Tính Toán Fibonacci
+                                        </Button>
+                                    </Link>
+
                                     {/* Premium & Personal Links - Only when authenticated */}
                                     {isAuthenticated && (
                                         <>
@@ -176,6 +194,24 @@ export default function Header() {
                                 </Button>
                             </Link>
                         ))}
+
+                        {/* Tools Dropdown */}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm" className="rounded-none uppercase whitespace-nowrap">
+                                    <span>Công cụ</span>
+                                    <ChevronDown className="ml-1 size-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="start">
+                                <DropdownMenuItem asChild>
+                                    <Link to="/cong-cu/fibonacci" className="flex items-center gap-2 cursor-pointer">
+                                        <Calculator className="size-4" />
+                                        <span>Bộ Tính Toán Fibonacci</span>
+                                    </Link>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
 
                         {/* Premium & Personal Links - Only when authenticated */}
                         {isAuthenticated && (

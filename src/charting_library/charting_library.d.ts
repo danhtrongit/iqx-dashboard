@@ -4576,7 +4576,6 @@ export interface ChartingLibraryWidgetOptions {
 	 */
 	autosize?: boolean;
 	/**
-	 * Setting this property to `true` makes the library write detailed [Datafeed API](https://www.tradingview.com/charting-library-docs/latest/connecting_data/datafeed-api/) logs into the browser console.
 	 * Alternatively, you can use the [`charting_library_debug_mode`](https://www.tradingview.com/charting-library-docs/latest/customization/Featuresets#charting_library_debug_mode) featureset or the {@link IChartingLibraryWidget.setDebugMode} method.
 	 *
 	 * ```javascript
@@ -5492,7 +5491,6 @@ export interface ContextMenuOptions {
 	 * ```js
 	 * context_menu: {
 	 *   items_processor: function(items, actionsFactory, params) {
-	 *      console.log(`Menu name is: ${params.menuName}`);
 	 *      const newItem = actionsFactory.createAction({
 	 *         actionId: 'hello-world',
 	 *         label: 'Say Hello',
@@ -10423,7 +10421,6 @@ export interface IChartWidgetApi {
 	 * ```javascript
 	 * widget.activeChart().onDataLoaded().subscribe(
 	 *     null,
-	 *     () => console.log('New history bars are loaded'),
 	 *     true
 	 * );
 	 * ```
@@ -10435,7 +10432,6 @@ export interface IChartWidgetApi {
 	 *
 	 * **Example**
 	 * ```javascript
-	 * widget.activeChart().onSymbolChanged().subscribe(null, () => console.log('The symbol is changed'));
 	 * ```
 	 * @returns A subscription object for when a symbol is resolved (ie changing resolution, timeframe, currency, etc.)
 	 */
@@ -10480,7 +10476,6 @@ export interface IChartWidgetApi {
 	 * ```javascript
 	 * widget.activeChart().onVisibleRangeChanged().subscribe(
 	 *     null,
-	 *     ({ from, to }) => console.log(from, to)
 	 * );
 	 * ```
 	 * @returns A subscription object for the chart's visible range changing.
@@ -10493,7 +10488,6 @@ export interface IChartWidgetApi {
 	 * ```javascript
 	 * widget.activeChart().onChartTypeChanged().subscribe(
 	 *     null,
-	 *     (chartType) => console.log('The type of chart is changed')
 	 * );
 	 * ```
 	 * @returns A subscription object for the chart type changing.
@@ -10520,7 +10514,6 @@ export interface IChartWidgetApi {
 	 * ```javascript
 	 * widget.activeChart().crossHairMoved().subscribe(
 	 *     null,
-	 *     ({ time, price }) => console.log(time, price)
 	 * );
 	 * ```
 	 * @returns A subscription object for the crosshair moving over the chart.
@@ -10659,7 +10652,6 @@ export interface IChartWidgetApi {
 	 *
 	 * **Example**
 	 * ```javascript
-	 * widget.activeChart().getAllShapes().forEach(({ name }) => console.log(name));
 	 * ```
 	 *
 	 * @returns An array of drawing information.
@@ -10670,7 +10662,6 @@ export interface IChartWidgetApi {
 	 *
 	 * **Example**
 	 * ```javascript
-	 * widget.activeChart().getAllStudies().forEach(({ name }) => console.log(name));
 	 * ```
 	 *
 	 * @returns An array of study information.
@@ -10681,7 +10672,6 @@ export interface IChartWidgetApi {
 	 *
 	 * **Example**
 	 * ```javascript
-	 * console.log(widget.activeChart().getPriceToBarRatio());
 	 * ```
 	 *
 	 * @returns The ratio or `null` if no ratio is defined.
@@ -10704,7 +10694,6 @@ export interface IChartWidgetApi {
 	 *
 	 * **Example**
 	 * ```javascript
-	 * console.log(widget.activeChart().isPriceToBarRatioLocked());
 	 * ```
 	 *
 	 */
@@ -10726,7 +10715,6 @@ export interface IChartWidgetApi {
 	 *
 	 * **Example**
 	 * ```javascript
-	 * console.log(widget.activeChart().getAllPanesHeight());
 	 * ```
 	 *
 	 * @returns An array of heights.
@@ -10737,7 +10725,6 @@ export interface IChartWidgetApi {
 	 *
 	 * **Example**
 	 * ```javascript
-	 * console.log(widget.activeChart().setAllPanesHeight([250, 400, 200]));
 	 * ```
 	 *
 	 * @param heights An array of heights.
@@ -11089,7 +11076,6 @@ export interface IChartWidgetApi {
 	 *
 	 * **Example**
 	 * ```javascript
-	 * console.log(widget.activeChart().symbol());
 	 * ```
 	 *
 	 */
@@ -11099,7 +11085,6 @@ export interface IChartWidgetApi {
 	 *
 	 * **Example**
 	 * ```javascript
-	 * console.log(widget.activeChart().symbolExt().name);
 	 * ```
 	 *
 	 */
@@ -11109,7 +11094,6 @@ export interface IChartWidgetApi {
 	 *
 	 * **Example**
 	 * ```javascript
-	 * console.log(widget.activeChart().resolution());
 	 * ```
 	 *
 	 */
@@ -11119,7 +11103,6 @@ export interface IChartWidgetApi {
 	 *
 	 * **Example**
 	 * ```javascript
-	 * console.log(widget.activeChart().getVisibleRange());
 	 * ```
 	 *
 	 */
@@ -11136,7 +11119,6 @@ export interface IChartWidgetApi {
 	 * Returns the main series style type.
 	 *
 	 * ```javascript
-	 * console.log(widget.activeChart().chartType());
 	 * ```
 	 */
 	chartType(): SeriesType;
@@ -11293,10 +11275,8 @@ export interface IChartWidgetApi {
 	 * ```javascript
 	 * widget.activeChart().requestSelectBar()
 	 *     .then(function(time) {
-	 *         console.log('user selects bar with time', time);
 	 *     })
 	 *     .catch(function() {
-	 *         console.log('bar selection was rejected');
 	 *     });
 	 * ```
 	 *
@@ -11615,7 +11595,6 @@ export interface IChartingLibraryWidget {
 	 *         items: [
 	 *             {
 	 *                 title: 'item#1',
-	 *                 onSelect: () => {console.log('1');},
 	 *             },
 	 *             {
 	 *                 title: 'item#2',
@@ -11855,7 +11834,6 @@ export interface IChartingLibraryWidget {
 	 *
 	 * **Example**
 	 * ```javascript
-	 * console.log(widget.getTheme());
 	 * ```
 	 *
 	 * @returns A theme name. The name of the current theme.
@@ -11998,7 +11976,6 @@ export interface IChartingLibraryWidget {
 	 */
 	currencyAndUnitVisibility(): IWatchedValue<VisibilityType>;
 	/**
-	 * Enable or disable writing detailed [Datafeed API](https://www.tradingview.com/charting-library-docs/latest/connecting_data/datafeed-api/) logs into the browser console.
 	 *
 	 * @param enabled A boolean flag. `true` to enable debug mode, `false` to disable.
 	 */
@@ -13732,7 +13709,6 @@ export interface IProjectionStudyResult {
  * ```js
  * var chart = tvWidget.activeChart();
  * // Prints all selection changes to the console
- * chart.selection().onChanged().subscribe(null, s => console.log(chart.selection().allSources()));
  * // Creates an indicator and saves its ID
  * var studyId = chart.createStudy("Moving Average", false, false, { length: 10 });
  * // Adds the indicator to the selection ([<id>] is printed to the console)
@@ -14102,7 +14078,6 @@ export interface IStudyApi {
 	 * ```javascript
 	 * studyApi.onDataLoaded().subscribe(
 	 *     null,
-	 *     () => console.log('Study data is loaded'),
 	 *     true
 	 * );
 	 * ```
@@ -14117,7 +14092,6 @@ export interface IStudyApi {
 	 * ```javascript
 	 * studyApi.studyApi.onStudyError().subscribe(
 	 *     null,
-	 *     () => console.log('Study error'),
 	 *     true
 	 * );
 	 * ```
@@ -14138,7 +14112,6 @@ export interface ISubscription<TFunc extends Function> {
 	 * @example
 	 * ```
 	 * // Log 'Series data loaded!' to the console the next time the data loaded event fires and then unsubscribe automatically.
-	 * seriesApi.onDataLoaded().subscribe(null, () => { console.log('Series data loaded!'); }, true);
 	 * ```
 	 * Subscribe to an event within a class. Manually unsubscribe when some condition is true.
 	 * ```
@@ -14320,7 +14293,6 @@ export interface ITimezoneApi {
 	 * ```javascript
 	 * timezoneApi.onTimezoneChanged().subscribe(
 	 *     null,
-	 *     timezone => console.log(`New timezone: ${timezone}`),
 	 *     true
 	 * );
 	 * ```
@@ -27366,7 +27338,6 @@ export interface TradingTerminalWidgetOptions extends Omit<ChartingLibraryWidget
 	 */
 	broker_factory?(host: IBrokerConnectionAdapterHost): IBrokerTerminal;
 	/**
-	 * Setting this property makes the library write detailed [Broker API](https://www.tradingview.com/charting-library-docs/latest/trading_terminal/trading-concepts/#broker-api) and [Trading Host](https://www.tradingview.com/charting-library-docs/latest/trading_terminal/trading-concepts/#trading-host) logs into the browser console.
 	 *
 	 * ```javascript
 	 * debug_broker: 'normal',

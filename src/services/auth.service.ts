@@ -89,7 +89,6 @@ export class TokenManager {
     try {
       return JSON.parse(userJson);
     } catch (error) {
-      console.error("Failed to parse user JSON:", error);
       return null;
     }
   }
@@ -137,7 +136,6 @@ export class TokenManager {
       // Add a 30-second buffer to account for network delays
       return payload.exp < (currentTime + 30);
     } catch (error) {
-      console.error('Token validation error:', error);
       return true;
     }
   }
@@ -152,7 +150,6 @@ authHttp.interceptors.request.use(
       if (!TokenManager.isTokenExpired(token)) {
         config.headers.Authorization = `Bearer ${token}`;
       } else {
-        console.log('Token expired, not adding to request headers');
       }
     }
     return config;
@@ -251,7 +248,6 @@ export class AuthService {
       await authHttp.post("/auth/logout");
     } catch (error) {
       // Continue with local logout even if server call fails
-      console.warn("Server logout failed:", error);
     } finally {
       TokenManager.clear();
     }
@@ -289,7 +285,6 @@ export class AuthService {
 
       return response.data;
     } catch (error) {
-      console.error('Refresh token failed:', error);
       TokenManager.clear();
       throw error instanceof AuthError ? error : new AuthError("Làm mới token thất bại");
     }

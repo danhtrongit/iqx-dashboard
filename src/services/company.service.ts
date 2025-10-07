@@ -145,7 +145,6 @@ export class CompanyService {
       for (const batch of batches) {
         const promises = batch.map(ticker =>
           this.getCompany(ticker).catch(error => {
-            console.warn(`Failed to fetch company ${ticker}:`, error)
             return null
           })
         )
@@ -426,7 +425,6 @@ export class CompanyService {
       )
       return response.data
     } catch (error: unknown) {
-      console.error(`Error fetching company relationships for ${ticker}:`, error)
       throw new CompanyError(
         `Failed to fetch company relationships: ${error.response?.data?.msg || error.message}`,
         error.response?.status
@@ -444,7 +442,6 @@ export class CompanyService {
       )
       return response.data
     } catch (error: unknown) {
-      console.error(`Error fetching shareholder structure for ${ticker}:`, error)
       throw new CompanyError(
         `Failed to fetch shareholder structure: ${error.response?.data?.msg || error.message}`,
         error.response?.status
@@ -462,7 +459,6 @@ export class CompanyService {
       )
       return response.data
     } catch (error: unknown) {
-      console.error(`Error fetching company shareholders for ${ticker}:`, error)
       throw new CompanyError(
         `Failed to fetch company shareholders: ${error.response?.data?.msg || error.message}`,
         error.response?.status

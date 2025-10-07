@@ -129,7 +129,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
           dispatch({ type: "LOGIN_SUCCESS", payload: { user, token } });
         }
       } catch (error) {
-        console.error("Auth initialization error:", error);
         // Clear potentially corrupted data
         TokenManager.clear();
         dispatch({ type: "LOGOUT" });
@@ -173,7 +172,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
               dispatch({ type: "UPDATE_USER", payload: user });
             }
           } catch (error) {
-            console.error("Failed to parse user from storage change:", error);
           }
         }
       }
@@ -214,7 +212,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
           }
         }
       } catch (error) {
-        console.error("Token refresh error:", error);
         // Don't logout on refresh error, let it handle naturally
       }
     }, 60000); // Check every minute
@@ -259,7 +256,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       await AuthService.logout();
     } catch (error) {
-      console.error("Logout error:", error);
     } finally {
       dispatch({ type: "LOGOUT" });
     }
