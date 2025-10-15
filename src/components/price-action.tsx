@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { usePriceAction } from "@/hooks/use-price-action";
 import { priceActionService } from "@/services/price-action.service";
 import type { PriceActionItem } from "@/types/price-action";
@@ -7,6 +7,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import {
   Table,
   TableBody,
@@ -258,6 +266,38 @@ function PriceActionTable({ data }: PriceActionTableProps) {
  * ========================= */
 export default function PriceActionDashboard() {
   const { data, isLoading, error } = usePriceAction();
+  
+  const allPriceData = data?.data || [];
+
+  // Lấy danh sách các ngày có dữ liệu (unique dates)
+  const availableDates = useMemo(() => {
+    const dates = new Set<string>();
+    allPriceData.forEach((item) => dates.add(item.date));
+    return Array.from(dates).sort((a, b) => {
+      // Parse DD/MM/YYYY to compare dates
+      const parseDate = (dateStr: string) => {
+        const [day, month, year] = dateStr.split('/').map(Number);
+        return new Date(year, month - 1, day);
+      };
+      return parseDate(b).getTime() - parseDate(a).getTime(); // Sort descending (latest first)
+    });
+  }, [allPriceData]);
+
+  // Mặc định chọn ngày mới nhất
+  const [selectedDate, setSelectedDate] = useState<string>("");
+
+  // Set ngày mới nhất khi dữ liệu load xong
+  useEffect(() => {
+    if (availableDates.length > 0 && !selectedDate) {
+      setSelectedDate(availableDates[0]);
+    }
+  }, [availableDates, selectedDate]);
+
+  // Lọc dữ liệu theo ngày đã chọn
+  const priceData = useMemo(() => {
+    if (!selectedDate) return allPriceData;
+    return allPriceData.filter((item) => item.date === selectedDate);
+  }, [selectedDate, allPriceData]);
 
   if (isLoading) {
     return (
@@ -285,8 +325,6 @@ export default function PriceActionDashboard() {
       </Card>
     );
   }
-
-  const priceData = data?.data || [];
 
   if (priceData.length === 0) {
     return (
@@ -318,6 +356,30 @@ export default function PriceActionDashboard() {
             </div>
             <Badge variant="outline" className="text-sm">
               {priceData.length} mã CK
+            </Badge>
+          </div>
+          
+          <Separator className="my-4" />
+          
+          {/* Date Filter */}
+          <div className="flex items-center gap-3">
+            <label className="text-sm font-medium text-muted-foreground">
+              Chọn ngày:
+            </label>
+            <Select value={selectedDate} onValueChange={setSelectedDate}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Chọn ngày..." />
+              </SelectTrigger>
+              <SelectContent>
+                {availableDates.map((date) => (
+                  <SelectItem key={date} value={date}>
+                    {date}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Badge variant="secondary" className="ml-auto">
+              Ngày mới nhất: {availableDates[0] || "N/A"}
             </Badge>
           </div>
         </CardHeader>

@@ -335,7 +335,10 @@ export default function XGBoostDashboard({
                     {/* Left: filter + list */}
                     <Card className="rounded-2xl">
                         <CardHeader>
-                            <CardTitle className="text-base">Danh sách mã</CardTitle>
+                            <div className="flex items-center justify-between">
+                                <CardTitle className="text-base">Danh sách mã</CardTitle>
+                                <Badge variant="secondary">{filtered.length} mã</Badge>
+                            </div>
                         </CardHeader>
                         <CardContent className="space-y-3">
                             {/* Date selector */}
