@@ -27,8 +27,11 @@ const FEATURE_LABELS: Record<string, string> = {
     ret_5d: "Tỷ suất 5 phiên",
     ret_20d: "Tỷ suất 20 phiên",
     macd_hist: "MACD histogram",
-    rsi_14: "RSI_14",
+    rsi_14: "RSI 14",
     atr14_pct: "Biên độ giá",
+    volume: "Khối lượng giao dịch",
+    close: "Giá đóng cửa",
+    pct_from_ema50: "Giá đóng cửa so với EMA50",
 };
 function displayFeatureName(raw: string) {
     return FEATURE_LABELS[raw] ?? raw;
@@ -79,7 +82,7 @@ function TickerCard({
     return (
         <button
             onClick={onClick}
-            className={`w-full text-left transition border rounded-2xl p-3 hover:shadow-sm ${active ? "border-primary shadow" : "border-border"
+            className={`w-full text-left transition border rounded p-3 hover:shadow-sm ${active ? "border-primary shadow" : "border-border"
                 }`}
         >
             <div className="flex items-center justify-between">
@@ -88,7 +91,7 @@ function TickerCard({
                     <span className="text-lg font-semibold tracking-wide">{p.ticker}</span>
                 </div>
                 <div className="min-w-[96px] text-right font-medium">
-                    {formatPct(p.pWin, 2)}
+                    {formatPct(p.pWin, 0)}
                 </div>
             </div>
             <div className="mt-2">{strengthBar(p.pWin)}</div>
@@ -99,29 +102,31 @@ function TickerCard({
 function FeatureRowItem({ f, maxAbs }: { f: FeatureRow; maxAbs: number }) {
     const shap = f.shapValueLogit ?? 0;
     const label = displayFeatureName(f.feature);
+    
+    // Format as percentage for specific features
+    const percentageFeatures = ['pct_from_ema20', 'ret_1d', 'ret_5d', 'ret_20d', 'atr14_pct'];
+    // Round to integer for MACD histogram and RSI_14
+    const integerFeatures = ['macd_hist', 'rsi_14'];
+    
+    const formattedValue = f.featureValue !== null && f.featureValue !== undefined
+        ? percentageFeatures.includes(f.feature)
+            ? formatPct(Number(f.featureValue), 2)
+            : integerFeatures.includes(f.feature)
+                ? Math.round(Number(f.featureValue)).toString()
+                : f.featureValue
+        : "—";
+    
     return (
         <div className="grid grid-cols-12 items-center gap-2 py-2">
             <div className="col-span-4 truncate">
                 <div className="font-medium truncate">{label}</div>
-                {label !== f.feature && (
-                    <div className="text-xs text-muted-foreground truncate">({f.feature})</div>
-                )}
             </div>
-            <div className="col-span-2 text-sm text-muted-foreground tabular-nums">
-                {f.featureValue ?? "—"}
+            <div className="col-span-3 text-sm text-foreground tabular-nums">
+                {formattedValue}
             </div>
-            <div className="col-span-2 text-sm tabular-nums">{(shap).toFixed(3)}</div>
+            <div className="col-span-3 text-sm tabular-nums">{(shap).toFixed(3)}</div>
             <div className="col-span-2">
                 <DirectionBadge d={shap >= 0 ? "up" : "down"} />
-            </div>
-            <div className="col-span-12">
-                <div className="h-2 rounded-full bg-muted">
-                    <div
-                        className={`h-2 rounded-full ${shap >= 0 ? "bg-emerald-600" : "bg-rose-600"
-                            }`}
-                        style={{ width: shapWidth(shap, maxAbs) }}
-                    />
-                </div>
             </div>
         </div>
     );
@@ -156,11 +161,10 @@ function FeatureListAll({ items }: { items: FeatureRow[] }) {
 
     const Header = () => (
         <div className="grid grid-cols-12 gap-2 text-xs text-muted-foreground">
-            <div className="col-span-4">Yếu tố</div>
-            <div className="col-span-2">Giá trị</div>
-            <div className="col-span-2">SHAP (logit)</div>
+            <div className="col-span-4">Biến ảnh hưởng</div>
+            <div className="col-span-3">Giá trị</div>
+            <div className="col-span-3">SHAP (logit)</div>
             <div className="col-span-2">Chiều hướng</div>
-            <div className="col-span-12">Độ ảnh hưởng</div>
         </div>
     );
 
@@ -215,24 +219,23 @@ function ModelHeader({ selected }: { selected?: XGBPrediction }) {
             <CardHeader>
                 <div className="flex items-center justify-between">
                     <CardTitle className="text-xl">XGBoost — Model Explorer</CardTitle>
-                    <Badge variant="outline">All features</Badge>
                 </div>
             </CardHeader>
             <CardContent className="flex flex-col gap-3">
                 {selected ? (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <div className="p-3 rounded-xl border">
-                            <div className="text-xs text-muted-foreground">Ticker</div>
+                            <div className="text-md text-muted-foreground">Mã chứng khoán</div>
                             <div className="text-lg font-semibold">{selected.ticker}</div>
                         </div>
                         <div className="p-3 rounded-xl border">
-                            <div className="text-xs text-muted-foreground">Date</div>
+                            <div className="text-md text-muted-foreground">Ngày dự báo</div>
                             <div className="text-lg font-semibold">{selected.dateLabel}</div>
                         </div>
                         <div className="p-3 rounded-xl border">
-                            <div className="text-xs text-muted-foreground">p_win</div>
+                            <div className="text-md text-muted-foreground">Win Rate</div>
                             <div className="text-lg font-semibold">
-                                {formatPct(selected.pWin, 3)}
+                                {formatPct(selected.pWin, 0)}
                             </div>
                             <div className="mt-2">{strengthBar(selected.pWin)}</div>
                         </div>
@@ -252,12 +255,10 @@ function ModelHeader({ selected }: { selected?: XGBPrediction }) {
  * ========================= */
 export interface XGBoostDashboardProps {
     initialTicker?: string;
-    searchPlaceholder?: string; // default "Tìm mã (VD: FPT)"
 }
 
 export default function XGBoostDashboard({
     initialTicker,
-    searchPlaceholder = "Tìm mã (VD: FPT)",
 }: XGBoostDashboardProps) {
     const { data, isLoading, error, topList } = useXGBoost();
     const [q, setQ] = useState("");
@@ -336,8 +337,8 @@ export default function XGBoostDashboard({
                     <Card className="rounded-2xl">
                         <CardHeader>
                             <div className="flex items-center justify-between">
-                                <CardTitle className="text-base">Danh sách mã</CardTitle>
-                                <Badge variant="secondary">{filtered.length} mã</Badge>
+                                <CardTitle className="text-lg">Danh sách mã</CardTitle>
+                                <Badge className="text-lg" variant="secondary">{filtered.length} mã</Badge>
                             </div>
                         </CardHeader>
                         <CardContent className="space-y-3">
@@ -367,17 +368,6 @@ export default function XGBoostDashboard({
 
                             <Separator />
 
-                            {/* Search filter */}
-                            <div className="flex items-center gap-2">
-                                <Input
-                                    placeholder={searchPlaceholder}
-                                    value={q}
-                                    onChange={(e) => setQ(e.target.value)}
-                                />
-                                <Button variant="secondary" onClick={() => setQ("")}>
-                                    Clear
-                                </Button>
-                            </div>
                             <ScrollArea className="h-[520px] pr-2">
                                 <div className="space-y-2">
                                     {filtered.map((p) => (
@@ -396,12 +386,7 @@ export default function XGBoostDashboard({
                     {/* Right: ALL features, tách Tăng/Giảm */}
                     <Card className="rounded-2xl md:col-span-2">
                         <CardHeader className="flex flex-row items-center justify-between">
-                            <CardTitle className="text-base">Tất cả features</CardTitle>
-                            <div className="text-xs text-muted-foreground">
-                                {data?.updatedAt ? (
-                                    <span>Cập nhật: {new Date(data.updatedAt).toLocaleString()}</span>
-                                ) : null}
-                            </div>
+                        
                         </CardHeader>
                         <CardContent>
                             {selected ? (
