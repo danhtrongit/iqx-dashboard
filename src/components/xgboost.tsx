@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useXGBoost } from "@/lib/xgboost/hooks";
 import type { XGBPrediction, FeatureRow } from "@/lib/xgboost/types";
 
