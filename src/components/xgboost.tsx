@@ -274,7 +274,7 @@ export default function XGBoostDashboard({
     const [selectedDate, setSelectedDate] = useState<string>("");
 
     // Set ngày mới nhất khi dữ liệu load xong
-    useMemo(() => {
+    useEffect(() => {
         if (availableDates.length > 0 && !selectedDate) {
             setSelectedDate(availableDates[0]);
         }
