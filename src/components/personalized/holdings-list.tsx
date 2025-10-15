@@ -181,7 +181,11 @@ export function HoldingsList() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex flex-col items-end">
-                      <span className="font-medium">
+                      <span className={cn(
+                          'text-base font-medium',
+                          isPricePositive ? 'text-green-600' : 'text-red-600',
+                          priceChange === 0 && 'text-yellow-600'
+                        )}>
                         {formatCurrency(holding.currentPrice)}
                       </span>
                       {holding.yesterdayPrice && (
