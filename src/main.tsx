@@ -46,8 +46,10 @@ import ForbiddenPage from './pages/403'
 // Protected route wrapper
 import { ProtectedRoute } from './components/auth/protected-route'
 import { TradingViewChart } from './pages/tradingview'
-import XGBoostDashboard from './components/xgboost'
 import FibonacciPage from './pages/fibonacci'
+import CurrencyConverterPage from './pages/currency-converter'
+import AriXHubPage from './pages/arix-hub'
+import PredictionPage from './pages/prediction'
 
 const router = createBrowserRouter([
   // Authentication routes (public)
@@ -89,6 +91,10 @@ const router = createBrowserRouter([
         element: <FibonacciPage />,
       },
       {
+        path: "cong-cu/chuyen-doi-tien-te",
+        element: <CurrencyConverterPage />,
+      },
+      {
         path: "theo-doi",
         element: <WatchlistPage />,
       },
@@ -97,6 +103,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <AriXProPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "arix-hub",
+        element: (
+          <ProtectedRoute>
+            <AriXHubPage />
           </ProtectedRoute>
         ),
       },
@@ -128,7 +142,7 @@ const router = createBrowserRouter([
         path: "du-bao",
         element: (
           <ProtectedRoute>  
-            <XGBoostDashboard />
+            <PredictionPage />
           </ProtectedRoute>
         ),
       },

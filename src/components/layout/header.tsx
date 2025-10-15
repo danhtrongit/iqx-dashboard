@@ -5,7 +5,7 @@ import UserButton from "@/components/layout/user-button";
 import { Search } from "./search-button";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { MenuIcon, Crown, User, Sparkles, Zap, ChevronDown, Calculator } from "lucide-react";
+import { MenuIcon, Crown, User, Sparkles, Zap, ChevronDown, Calculator, Coins, Filter } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { cn } from "@/lib/utils";
@@ -26,10 +26,6 @@ export default function Header() {
             href: "/",
         },
         {
-            name: "Bộ lọc",
-            href: "/bo-loc",
-        },
-        {
             name: "Biểu đồ kỹ thuật",
             href: "/bieu-do-ky-thuat",
         },
@@ -46,6 +42,11 @@ export default function Header() {
             name: "Dự báo",
             href: "/du-bao",
         },
+        {
+            name: "AriX Hub",
+            href: "/arix-hub",
+        },
+        
     ]
 
     return (
@@ -122,6 +123,12 @@ export default function Header() {
                                         <Button variant="ghost" className="w-full justify-start text-left h-12">
                                             <Calculator className="size-5 mr-2" />
                                             Bộ Tính Toán Fibonacci
+                                        </Button>
+                                    </Link>
+                                    <Link to="/cong-cu/chuyen-doi-tien-te" onClick={() => setIsOpen(false)}>
+                                        <Button variant="ghost" className="w-full justify-start text-left h-12">
+                                            <Coins className="size-5 mr-2" />
+                                            Chuyển Đổi Tiền Tệ
                                         </Button>
                                     </Link>
 
@@ -205,11 +212,24 @@ export default function Header() {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="start">
                                 <DropdownMenuItem asChild>
+                                    <Link to="/bo-loc" className="flex items-center gap-2 cursor-pointer">
+                                        <Filter className="size-4" />
+                                        <span>Bộ lọc</span>
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild>
                                     <Link to="/cong-cu/fibonacci" className="flex items-center gap-2 cursor-pointer">
                                         <Calculator className="size-4" />
                                         <span>Bộ Tính Toán Fibonacci</span>
                                     </Link>
                                 </DropdownMenuItem>
+                                <DropdownMenuItem asChild>
+                                    <Link to="/cong-cu/chuyen-doi-tien-te" className="flex items-center gap-2 cursor-pointer">
+                                        <Coins className="size-4" />
+                                        <span>Chuyển Đổi Tiền Tệ</span>
+                                    </Link>
+                                </DropdownMenuItem>
+
                             </DropdownMenuContent>
                         </DropdownMenu>
 

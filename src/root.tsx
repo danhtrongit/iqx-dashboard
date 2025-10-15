@@ -1,6 +1,7 @@
 import { Outlet, useNavigation } from "react-router-dom"
 import { ThemeProvider } from "@/contexts/theme-context"
 import Header from "@/components/layout/header"
+import Footer from "@/components/layout/footer"
 import SearchDialog from "@/components/layout/search-dialog"
 import { SearchProvider } from "@/contexts/search-provider"
 import { QueryClientProvider, useIsFetching, useIsMutating } from "@tanstack/react-query"
@@ -38,13 +39,14 @@ function InnerApp() {
 
   return (
     <SearchProvider>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background flex flex-col">
         <LoadingBar color="#22c55e" height={2} ref={loadingRef} shadow={false} className="z-[60]" />
         <Header />
         <SearchDialog />
-        <main>
+        <main className="flex-1">
           <Outlet />
         </main>
+        <Footer />
         <IQXChatbot options={{ showSuggestions: true }} />
         <Toaster />
       </div>

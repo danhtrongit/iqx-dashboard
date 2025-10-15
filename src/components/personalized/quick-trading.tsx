@@ -12,6 +12,8 @@ export function QuickTrading() {
   const [symbol, setSymbol] = useState('FPT')
   const [quantity, setQuantity] = useState('')
   const [mode, setMode] = useState<'BUY' | 'SELL'>('BUY')
+  const [orderType, setOrderType] = useState<'MARKET' | 'LIMIT'>('MARKET')
+  const [limitPrice, setLimitPrice] = useState('')
 
   const { data: portfolio } = useVirtualPortfolio()
   const buyMutation = useBuyStock()
@@ -26,7 +28,13 @@ export function QuickTrading() {
   const holding = portfolio?.holdings.find(h => h.symbolCode === symbol)
   // Prefer real-time price from API, fallback to holding price
   const currentPrice = stockPrice?.currentPrice || holding?.currentPrice || 0
-  const totalAmount = parseInt(quantity || '0') * currentPrice
+  
+  // Use limit price if LIMIT order, otherwise use current market price
+  const executionPrice = orderType === 'LIMIT' && limitPrice 
+    ? parseFloat(limitPrice) 
+    : currentPrice
+    
+  const totalAmount = parseInt(quantity || '0') * executionPrice
   const calculation = VirtualTradingService.calculateTradingCost(totalAmount, mode)
   const isLoading = buyMutation.isPending || sellMutation.isPending
 
@@ -36,25 +44,34 @@ export function QuickTrading() {
       return
     }
 
+    // Validate limit price for LIMIT orders
+    if (orderType === 'LIMIT') {
+      if (!limitPrice || parseFloat(limitPrice) <= 0) {
+        toast.error('Vui lòng nhập giá giới hạn hợp lệ')
+        return
+      }
+    }
+
     try {
       const qty = parseInt(quantity)
+      const orderData = {
+        symbolCode: symbol,
+        quantity: qty,
+        orderType,
+        ...(orderType === 'LIMIT' && { limitPrice: parseFloat(limitPrice) }),
+      }
 
       if (mode === 'BUY') {
-        await buyMutation.mutateAsync({
-          symbolCode: symbol,
-          quantity: qty,
-          orderType: 'MARKET',
-        })
+        await buyMutation.mutateAsync(orderData)
       } else {
-        await sellMutation.mutateAsync({
-          symbolCode: symbol,
-          quantity: qty,
-          orderType: 'MARKET',
-        })
+        await sellMutation.mutateAsync(orderData)
       }
       
-      // Reset quantity after success
+      // Reset form after success
       setQuantity('')
+      if (orderType === 'LIMIT') {
+        setLimitPrice('')
+      }
     } catch (error) {
       // Error already shown by mutation hook
     }
@@ -119,6 +136,51 @@ export function QuickTrading() {
           </div>
         </div>
 
+        {/* Order Type */}
+        <div className="space-y-1">
+          <label className="text-xs text-muted-foreground">Loại lệnh</label>
+          <div className="grid grid-cols-2 gap-1 p-0.5 bg-muted/30 rounded-md h-9">
+            <button
+              onClick={() => {
+                setOrderType('MARKET')
+                setLimitPrice('')
+              }}
+              className={cn(
+                "rounded text-xs font-semibold transition-all",
+                orderType === 'MARKET' ? "bg-primary text-primary-foreground" : "text-muted-foreground"
+              )}
+            >
+              Thị trường
+            </button>
+            <button
+              onClick={() => setOrderType('LIMIT')}
+              className={cn(
+                "rounded text-xs font-semibold transition-all",
+                orderType === 'LIMIT' ? "bg-primary text-primary-foreground" : "text-muted-foreground"
+              )}
+            >
+              Giới hạn
+            </button>
+          </div>
+        </div>
+
+        {/* Limit Price (only for LIMIT orders) */}
+        {orderType === 'LIMIT' && (
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground">Giá giới hạn</label>
+            <Input
+              type="number"
+              value={limitPrice}
+              onChange={(e) => setLimitPrice(e.target.value)}
+              placeholder={currentPrice > 0 ? currentPrice.toString() : '0'}
+              className="h-9 text-center font-semibold tabular-nums"
+            />
+            <p className="text-[10px] text-muted-foreground text-center">
+              Giá thị trường: {currentPrice.toLocaleString('vi-VN')} VND
+            </p>
+          </div>
+        )}
+
         {/* Quantity */}
         <div className="space-y-1">
           <div className="flex items-baseline justify-between">
@@ -166,7 +228,14 @@ export function QuickTrading() {
         {/* Execute */}
         <Button
           onClick={handleExecute}
-          disabled={!symbol || !quantity || parseInt(quantity) <= 0 || currentPrice <= 0 || isLoading}
+          disabled={
+            !symbol || 
+            !quantity || 
+            parseInt(quantity) <= 0 || 
+            (orderType === 'MARKET' && currentPrice <= 0) ||
+            (orderType === 'LIMIT' && (!limitPrice || parseFloat(limitPrice) <= 0)) ||
+            isLoading
+          }
           className={cn(
             "w-full h-10 font-semibold",
             mode === 'BUY' ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"
@@ -180,7 +249,7 @@ export function QuickTrading() {
           ) : (
             <>
               <Check className="h-4 w-4" />
-              {mode === 'BUY' ? 'MUA' : 'BÁN'}
+              {mode === 'BUY' ? 'MUA' : 'BÁN'} {orderType === 'LIMIT' && '(Giới hạn)'}
             </>
           )}
         </Button>

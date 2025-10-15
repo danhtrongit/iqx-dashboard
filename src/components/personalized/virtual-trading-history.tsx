@@ -249,7 +249,8 @@ export function VirtualTradingHistory() {
                     <TableHead className="w-20">Loại</TableHead>
                     <TableHead>Mã CK</TableHead>
                     <TableHead className="text-center">Số lượng</TableHead>
-                    <TableHead className="text-right">Giá</TableHead>
+                    <TableHead className="text-right">Giá thực hiện</TableHead>
+                    <TableHead className="text-right">Giá vốn TB</TableHead>
                     <TableHead className="text-right">Tổng giá trị</TableHead>
                     <TableHead className="text-right">Phí + Thuế</TableHead>
                     <TableHead className="text-right">Thực nhận/trả</TableHead>
@@ -286,6 +287,12 @@ export function VirtualTradingHistory() {
                         <TableCell className="text-right">
                           <div className="font-medium">
                             {VirtualTradingService.formatCurrency(transaction.pricePerShare)}
+                          </div>
+                        </TableCell>
+
+                        <TableCell className="text-right">
+                          <div className="font-medium">
+                            {VirtualTradingService.formatCurrency(transaction.averageCost)}
                           </div>
                         </TableCell>
 

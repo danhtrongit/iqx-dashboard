@@ -16,6 +16,7 @@ import {
 
 const PROXY_URL = (import.meta as any).env?.VITE_PROXY_URL || 'https://proxy.iqx.vn/proxy';
 const API_URL = (import.meta as any).env?.VITE_API_URL || 'https://proxy.iqx.vn';
+const API_BASE_URL = (import.meta as any).env?.VITE_BASE_API || 'http://localhost:3000/api';
 
 // Map TradingView resolutions to our API timeframes
 const resolutionToTimeFrame: Record<string, string> = {
@@ -68,20 +69,34 @@ export class Datafeed {
     _symbolType: string,
     onResult: SearchSymbolsCallback
   ): void {
-    fetch(`${API_URL}/api/stocks/quick-search?q=${encodeURIComponent(userInput)}&limit=30`)
-      .then(response => response.json())
-      .then(data => {
+    // Use the same search endpoint as header search
+    if (!userInput.trim()) {
+      onResult([]);
+      return;
+    }
+
+    fetch(`${API_BASE_URL}/symbols/search?search=${encodeURIComponent(userInput.trim())}&limit=30`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Search failed');
+        }
+        return response.json();
+      })
+      .then(response => {
+        // Response format: { data: [...], meta: {...}, message: "..." }
+        const data = response.data || [];
         const results: SearchSymbolResultItem[] = data.map((item: any) => ({
           symbol: item.symbol,
           full_name: `${item.board}:${item.symbol}`,
-          description: item.organShortName || item.name,
+          description: item.organ_name || item.symbol,
           exchange: item.board,
           ticker: item.symbol,
-          type: item.type || 'stock',
+          type: item.type === 'STOCK' ? 'stock' : (item.type === 'BOND' ? 'bond' : (item.type === 'FU' ? 'futures' : 'stock')),
         }));
         onResult(results);
       })
       .catch(error => {
+        console.error('Symbol search error:', error);
         onResult([]);
       });
   }

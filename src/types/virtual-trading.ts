@@ -36,6 +36,7 @@ export interface VirtualHolding {
   profitLossPercentage: string  // API returns this as string like "-0.2433"
   totalCost: number
   lastPriceUpdate?: string
+  averageCost: number
   createdAt?: string
   updatedAt?: string
 }
@@ -58,6 +59,7 @@ export interface VirtualTransaction {
   portfolioBalanceAfter: number
   createdAt: string
   executedAt?: string
+  averageCost: number
 }
 
 export interface StockPrice {

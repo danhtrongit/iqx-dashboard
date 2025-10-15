@@ -42,7 +42,7 @@ interface TradingViewChartProps {
 export function TradingViewChart({
   symbol = 'VNINDEX',
   interval = '1D' as ResolutionString,
-  height = 650,
+  height = 500,
 }: TradingViewChartProps) {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const tvWidgetRef = useRef<IChartingLibraryWidget | null>(null);
@@ -149,7 +149,7 @@ export function TradingViewChart({
   const heightStyle = typeof height === 'number' ? `${height}px` : height;
 
   return (
-    <div className="relative w-full" style={{ height: heightStyle }}>
+    <div className="relative w-full" style={{ maxHeight: heightStyle, height: heightStyle }}>
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm z-50">
           <div className="flex flex-col items-center gap-2">
@@ -161,7 +161,7 @@ export function TradingViewChart({
       <div
         ref={chartContainerRef}
         id={containerId}
-        className="w-full h-96"
+        className="w-full h-full"
       />
     </div>
   );

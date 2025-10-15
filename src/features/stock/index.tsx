@@ -5,6 +5,7 @@ import { Organization } from "./components/organization"
 import ForeignNet from "./components/foreign-net"
 import News from "./components/news"
 import FinancialReport from "./components/financial-report"
+import FinancialRatioTable from "./components/financial-ratio-table"
 import AnalysisReport from "./components/analysis-report"
 import {
   Tabs,
@@ -22,7 +23,7 @@ export default function StockDetail({ ticker }: { ticker: string }) {
           <StockProfile ticker={ticker} />
 
           <Tabs defaultValue="market-index" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 lg:grid-cols-8 h-auto  border-b bg-transparent p-0">
+            <TabsList className="grid w-full grid-cols-3 lg:grid-cols-9 h-auto  border-b bg-transparent p-0">
               <TabsTrigger
                 value="market-index"
                 className="relative py-3 px-4 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-1 data-[state=active]:after:rounded-lg data-[state=active]:after:bg-blue-700"
@@ -57,7 +58,13 @@ export default function StockDetail({ ticker }: { ticker: string }) {
                 value="financial-report"
                 className="relative py-3 px-4 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-1 data-[state=active]:after:rounded-lg data-[state=active]:after:bg-blue-700"
               >
-                Tài chính
+                Báo cáo TC
+              </TabsTrigger>
+              <TabsTrigger
+                value="financial-ratios"
+                className="relative py-3 px-4 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-1 data-[state=active]:after:rounded-lg data-[state=active]:after:bg-blue-700"
+              >
+                Chỉ số TC
               </TabsTrigger>
               <TabsTrigger
                 value="analysis-report"
@@ -107,6 +114,12 @@ export default function StockDetail({ ticker }: { ticker: string }) {
               <TabsContent value="financial-report" className="m-0">
                 <div className="max-w-full">
                   <FinancialReport symbol={ticker} />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="financial-ratios" className="m-0">
+                <div className="max-w-full">
+                  <FinancialRatioTable ticker={ticker} />
                 </div>
               </TabsContent>
 
