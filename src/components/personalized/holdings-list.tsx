@@ -156,6 +156,13 @@ export function HoldingsList() {
               )
               const isPositive = holding.unrealizedProfitLoss >= 0
 
+              // Calculate price change from yesterday
+              const priceChange = holding.currentPrice - (holding.yesterdayPrice || holding.currentPrice)
+              const priceChangePercentage = holding.yesterdayPrice 
+                ? ((priceChange / holding.yesterdayPrice) * 100)
+                : 0
+              const isPricePositive = priceChange >= 0
+
               return (
                 <TableRow key={holding.id}>
                   <TableCell>
@@ -173,7 +180,21 @@ export function HoldingsList() {
                     {formatCurrency(holding.averagePrice)}
                   </TableCell>
                   <TableCell className="text-right">
-                    {formatCurrency(holding.currentPrice)}
+                    <div className="flex flex-col items-end">
+                      <span className="font-medium">
+                        {formatCurrency(holding.currentPrice)}
+                      </span>
+                      {holding.yesterdayPrice && (
+                        <span className={cn(
+                          'text-xs font-medium',
+                          isPricePositive ? 'text-green-600' : 'text-red-600',
+                          priceChange === 0 && 'text-yellow-600'
+                        )}>
+                          {isPricePositive && priceChange !== 0 ? '+' : ''}
+                          {priceChangePercentage.toFixed(2)}%
+                        </span>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell className="text-right font-semibold">
                     {formatCurrency(holding.currentValue)}

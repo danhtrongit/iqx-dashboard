@@ -1,4 +1,3 @@
-import PeerComparison from "./components/peer-comparison"
 import { StockProfile } from "./components/stock-profile"
 import TechnicalAnalysis from "./components/technical-analysis"
 import { Organization } from "./components/organization"
@@ -29,12 +28,6 @@ export default function StockDetail({ ticker }: { ticker: string }) {
                 className="relative py-3 px-4 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-1 data-[state=active]:after:rounded-lg data-[state=active]:after:bg-blue-700"
               >
                 Giá
-              </TabsTrigger>
-              <TabsTrigger
-                value="peer-comparison"
-                className="relative py-3 px-4 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-1 data-[state=active]:after:rounded-lg data-[state=active]:after:bg-blue-700"
-              >
-                So sánh
               </TabsTrigger>
               <TabsTrigger
                 value="technical-analysis"
@@ -84,12 +77,6 @@ export default function StockDetail({ ticker }: { ticker: string }) {
               <TabsContent value="market-index" className="m-0">
                 <div className="max-w-full">
                   <MarketIndex symbol={ticker} />
-                </div>
-              </TabsContent>
-
-              <TabsContent value="peer-comparison" className="m-0">
-                <div className="max-w-full">
-                  <PeerComparison symbol={ticker} />
                 </div>
               </TabsContent>
 

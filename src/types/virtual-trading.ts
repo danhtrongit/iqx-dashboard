@@ -37,6 +37,7 @@ export interface VirtualHolding {
   totalCost: number
   lastPriceUpdate?: string
   averageCost: number
+  yesterdayPrice?: number  // Yesterday's closing price for calculating daily change
   createdAt?: string
   updatedAt?: string
 }
