@@ -10,6 +10,13 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 /* =========================
  * Feature display name mapping
@@ -256,19 +263,42 @@ export default function XGBoostDashboard({
     const [q, setQ] = useState("");
     const [active, setActive] = useState<string | null>(initialTicker ?? null);
 
+    // Lấy danh sách các ngày có dữ liệu (unique dates)
+    const availableDates = useMemo(() => {
+        const dates = new Set<string>();
+        topList.forEach((p) => dates.add(p.dateISO));
+        return Array.from(dates).sort((a, b) => b.localeCompare(a)); // Sort descending (latest first)
+    }, [topList]);
+
+    // Mặc định chọn ngày mới nhất
+    const [selectedDate, setSelectedDate] = useState<string>("");
+
+    // Set ngày mới nhất khi dữ liệu load xong
+    useMemo(() => {
+        if (availableDates.length > 0 && !selectedDate) {
+            setSelectedDate(availableDates[0]);
+        }
+    }, [availableDates, selectedDate]);
+
+    // Lọc dữ liệu theo ngày đã chọn
+    const dateFilteredList = useMemo(() => {
+        if (!selectedDate) return topList;
+        return topList.filter((x) => x.dateISO === selectedDate);
+    }, [selectedDate, topList]);
+
     const filtered = useMemo(() => {
         const query = q.trim().toUpperCase();
-        if (!query) return topList;
-        return topList.filter((x) => x.ticker.toUpperCase().includes(query));
-    }, [q, topList]);
+        if (!query) return dateFilteredList;
+        return dateFilteredList.filter((x) => x.ticker.toUpperCase().includes(query));
+    }, [q, dateFilteredList]);
 
     const selected = useMemo(() => {
         if (active) {
-            const found = topList.find((x) => x.ticker === active);
+            const found = dateFilteredList.find((x) => x.ticker === active);
             if (found) return found;
         }
-        return topList[0];
-    }, [active, topList]);
+        return dateFilteredList[0];
+    }, [active, dateFilteredList]);
 
     if (isLoading) {
         return (
@@ -308,6 +338,33 @@ export default function XGBoostDashboard({
                             <CardTitle className="text-base">Danh sách mã</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-3">
+                            {/* Date selector */}
+                            <div>
+                                <label className="text-xs text-muted-foreground mb-1.5 block">
+                                    Chọn ngày
+                                </label>
+                                <Select value={selectedDate} onValueChange={setSelectedDate}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Chọn ngày..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {availableDates.map((dateISO) => {
+                                            // Tìm một prediction với date này để lấy dateLabel
+                                            const pred = topList.find((p) => p.dateISO === dateISO);
+                                            const label = pred?.dateLabel || dateISO;
+                                            return (
+                                                <SelectItem key={dateISO} value={dateISO}>
+                                                    {label}
+                                                </SelectItem>
+                                            );
+                                        })}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            <Separator />
+
+                            {/* Search filter */}
                             <div className="flex items-center gap-2">
                                 <Input
                                     placeholder={searchPlaceholder}

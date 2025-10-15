@@ -277,7 +277,7 @@ export function TradingModal({
                   </span>
                 </div>
                 <div className="flex justify-between text-sm text-muted-foreground">
-                  <span>Phí giao dịch (0.15%)</span>
+                  <span>Phí giao dịch (0.01%)</span>
                   <span>{VirtualTradingService.formatCurrency(estimatedCost.fee)}</span>
                 </div>
                 {estimatedCost.tax > 0 && (

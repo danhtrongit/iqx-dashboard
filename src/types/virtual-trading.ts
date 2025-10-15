@@ -213,8 +213,8 @@ export interface TradingFormData {
 }
 
 // Constants
-export const INITIAL_PORTFOLIO_BALANCE = 10_000_000_000 // 10 billion VND
-export const TRADING_FEE_RATE = 0.0015 // 0.15%
+export const INITIAL_PORTFOLIO_BALANCE = 1_000_000_000 // 1 billion VND
+export const TRADING_FEE_RATE = 0.0001 // 0.01%
 export const SELLING_TAX_RATE = 0.001 // 0.1%
 
 // Helper types

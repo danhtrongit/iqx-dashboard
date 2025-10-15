@@ -28,7 +28,7 @@ import {
 import { useCreatePortfolio, useVirtualPortfolio } from "@/hooks/use-virtual-trading";
 import { VirtualTradingService } from "@/services/virtual-trading.service";
 
-const INITIAL_BALANCE = 10000000000; // 10 tỷ VND
+const INITIAL_BALANCE = 1000000000; // 1 tỷ VND
 
 export default function VirtualTradingPage() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
@@ -143,7 +143,7 @@ export default function VirtualTradingPage() {
             Đấu trường Chứng khoán Ảo
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Tham gia giao dịch chứng khoán với vốn ảo 10 tỷ VND. Trải nghiệm thực tế với giá real-time, không rủi ro tài chính.
+            Tham gia giao dịch chứng khoán với vốn ảo 1 tỷ VND. Trải nghiệm thực tế với giá real-time, không rủi ro tài chính.
           </p>
         </div>
 
@@ -231,7 +231,7 @@ export default function VirtualTradingPage() {
                 <h3 className="text-lg font-semibold">Phí giao dịch</h3>
               </div>
               <p className="text-gray-600 dark:text-gray-300 mb-2">
-                Phí như thực tế: 0.15% mua/bán + 0.1% thuế bán
+                Phí như thực tế: 0.01% mua/bán + 0.1% thuế bán
               </p>
               <Badge variant="secondary" className="bg-orange-100 text-orange-800">
                 Mô phỏng thực tế
